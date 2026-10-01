@@ -1,0 +1,91 @@
+{{ $current := . }}
+{{ $root := site.GetPage "/posts" }}
+<nav class="text-sm">
+  <div class="mb-3 px-1">
+    <input
+      type="text"
+      id="rbx-search"
+      placeholder="Búsqueda"
+      class="w-full rounded border border-neutral-600/50 bg-black/20 px-2 py-1.5 text-xs text-neutral-200 placeholder:text-neutral-500 focus:outline-none" />
+  </div>
+  <p class="rbx-tree-root mb-2 px-1 text-xs font-semibold uppercase tracking-wide">Posts</p>
+  <ul id="rbx-tree">
+    {{ range $root.Sections.ByTitle }}
+      {{ template "rbxNode" (dict "page" . "current" $current) }}
+    {{ end }}
+    {{ range $root.RegularPages.ByTitle }}
+      {{ template "rbxLeaf" (dict "page" . "current" $current) }}
+    {{ end }}
+  </ul>
+</nav>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var input = document.getElementById('rbx-search');
+  var tree = document.getElementById('rbx-tree');
+  if (!input || !tree) return;
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    var items = tree.querySelectorAll('li');
+    items.forEach(function (li) { li.style.display = ''; });
+    if (!q) return;
+    tree.querySelectorAll('a').forEach(function (a) {
+      var li = a.closest('li');
+      if (!a.textContent.toLowerCase().includes(q)) {
+        li.style.display = 'none';
+      } else {
+        var d = a.closest('details');
+        while (d) {
+          d.open = true;
+          var pli = d.closest('li');
+          if (pli) pli.style.display = '';
+          d = d.parentElement ? d.parentElement.closest('details') : null;
+        }
+      }
+    });
+    tree.querySelectorAll('details').forEach(function (d) {
+      var visible = Array.from(d.querySelectorAll('a')).some(function (a) {
+        return a.closest('li').style.display !== 'none';
+      });
+      var li = d.closest('li');
+      if (li) li.style.display = visible ? '' : 'none';
+    });
+  });
+});
+</script>
+
+{{ define "rbxNode" }}
+  {{ $page := .page }}
+  {{ $current := .current }}
+  {{ $open := or (eq $current $page) ($page.IsAncestor $current) }}
+  <li>
+    <details class="group" {{ if $open }}open{{ end }}>
+      <summary class="flex cursor-pointer select-none items-center gap-2 rounded px-1 py-1 hover:bg-white/10{{ if $open }} rbx-tree-active{{ end }}">
+        <svg class="h-3.5 w-3.5 shrink-0 text-neutral-500 transition-transform duration-200 group-open:rotate-90" width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 0 1 .02-1.06L11.168 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06-.02Z" clip-rule="evenodd" />
+        </svg>
+        <span>{{ $page.Title }}</span>
+      </summary>
+      <ul>
+        {{ range $page.Sections.ByTitle }}
+          {{ template "rbxNode" (dict "page" . "current" $current) }}
+        {{ end }}
+        {{ range $page.RegularPages.ByTitle }}
+          {{ template "rbxLeaf" (dict "page" . "current" $current) }}
+        {{ end }}
+      </ul>
+    </details>
+  </li>
+{{ end }}
+
+{{ define "rbxLeaf" }}
+  {{ $page := .page }}
+  {{ $current := .current }}
+  {{ $isCurrent := eq $current $page }}
+  <li>
+    <a href="{{ $page.RelPermalink }}"
+      class="block rounded px-1 py-1 {{ if $isCurrent }}font-medium text-primary-400{{ else }}text-neutral-300 hover:text-white{{ end }}">
+      {{ $page.Title }}
+    </a>
+  </li>
+{{ end }}

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- círculo blanco a sangre (sin margen) con filo negro -->
+  <circle cx="100" cy="100" r="96" fill="#ffffff" stroke="#000000" stroke-width="12" />
+
+  <!-- sombra de la letra -->
+  <text x="104" y="154" text-anchor="middle"
+        font-family="Arial Black, Helvetica, sans-serif"
+        font-weight="900" font-size="130"
+        fill="#0b1220"
+        style="letter-spacing:-2px">R</text>
+
+  <!-- letra principal -->
+  <text x="100" y="150" text-anchor="middle"
+        font-family="Arial Black, Helvetica, sans-serif"
+        font-weight="900" font-size="130"
+        fill="#1e3a8a"
+        style="letter-spacing:-2px">R</text>
+</svg>

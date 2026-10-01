@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>VPN on Blog Ryberxy</title>
+    <link>http://localhost:1313/posts/vpn/</link>
+    <description>Recent content in VPN on Blog Ryberxy</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>es</language>
+    <copyright>© 2026 Roberto Martín Rivera</copyright>
+    <lastBuildDate>Mon, 28 Sep 2026 00:00:00 +0000</lastBuildDate><atom:link href="http://localhost:1313/posts/vpn/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>VPN de acceso remoto con OpenVPN</title>
+      <link>http://localhost:1313/posts/vpn/acceso-remoto-openvpn/</link>
+      <pubDate>Mon, 28 Sep 2026 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/posts/vpn/acceso-remoto-openvpn/</guid>
+      <description></description>
+      <media:content xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:1313/posts/vpn/acceso-remoto-openvpn/featured.png" />
+    </item>
+    
+    <item>
+      <title>VPN de acceso remoto con WireGuard</title>
+      <link>http://localhost:1313/posts/vpn/acceso-remoto-wireguard/</link>
+      <pubDate>Mon, 28 Sep 2026 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/posts/vpn/acceso-remoto-wireguard/</guid>
+      <description></description>
+      <media:content xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:1313/posts/vpn/acceso-remoto-wireguard/featured.png" />
+    </item>
+    
+    <item>
+      <title>VPN Site to Site con OpenVPN</title>
+      <link>http://localhost:1313/posts/vpn/site-to-site-openvpn/</link>
+      <pubDate>Mon, 28 Sep 2026 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/posts/vpn/site-to-site-openvpn/</guid>
+      <description></description>
+      <media:content xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:1313/posts/vpn/site-to-site-openvpn/featured.png" />
+    </item>
+    
+    <item>
+      <title>VPN Site to Site con WireGuard</title>
+      <link>http://localhost:1313/posts/vpn/site-to-site-wireguard/</link>
+      <pubDate>Mon, 28 Sep 2026 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/posts/vpn/site-to-site-wireguard/</guid>
+      <description></description>
+      <media:content xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:1313/posts/vpn/site-to-site-wireguard/featured.png" />
+    </item>
+    
+  </channel>
+</rss>

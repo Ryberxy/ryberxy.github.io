@@ -1,0 +1,25 @@
+disabled = false
+locale = "es"
+label = "Español"
+weight = 1
+title = "Blog Ryberxy"
+
+[params]
+  displayName = "ES"
+  isoCode = "es"
+  rtl = false
+  dateFormat = "2 January 2006"
+  description = "Prácticas y proyectos de informática"
+  copyright = "© 2026 Roberto Martín Rivera"
+
+[params.author]
+  name = "Roberto Martín Rivera"
+  image = "img/author.jpg"
+  imageQuality = 96
+  headline = "Estudiante de informática"
+  bio = "Aquí documento mis prácticas y proyectos: redes, sistemas, bases de datos y más."
+  links = [
+    { github = "https://github.com/Ryberxy" },
+    # { linkedin = "https://linkedin.com/in/TU-USUARIO" },
+    # { email = "mailto:tu-correo@ejemplo.com" },
+  ]

@@ -1,0 +1,1884 @@
+<!doctype html>
+<html
+  lang="es"
+  dir="ltr"
+  class="scroll-smooth"
+  data-default-appearance="light"
+  data-auto-appearance="true"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8">
+  
+    <meta http-equiv="content-language" content="es">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color">
+
+  
+  
+    <title>Despliegue de un clúster K3s con OpenTofu y Ansible &middot; Blog Ryberxy</title>
+    <meta name="title" content="Despliegue de un clúster K3s con OpenTofu y Ansible &middot; Blog Ryberxy">
+  
+
+  
+  
+  
+  
+  
+    
+  
+    
+  
+    
+  
+  
+    <meta name="description" content="Aprovisionamiento de un clúster k3s sobre Multipass con OpenTofu, configuración con Ansible y almacenamiento compartido vía NFS desplegado con Helm">
+  
+  
+    <meta name="keywords" content="OpenTofu,Ansible,Kubernetes,k3s,Helm,NFS,Makefile,">
+  
+  
+  
+  <link rel="canonical" href="http://localhost:1313/posts/iac/cluster-k3s/">
+  
+  
+  
+
+  
+  
+    <meta name="author" content="Roberto Martín Rivera">
+  
+  
+    
+      
+        
+          <link href="https://github.com/Ryberxy" rel="me">
+        
+      
+    
+  
+
+  
+  <meta property="og:url" content="http://localhost:1313/posts/iac/cluster-k3s/">
+	<meta property="og:site_name" content="Blog Ryberxy">
+	<meta property="og:title" content="Despliegue de un clúster K3s con OpenTofu y Ansible">
+	<meta property="og:description" content="Aprovisionamiento de un clúster k3s sobre Multipass con OpenTofu, configuración con Ansible y almacenamiento compartido vía NFS desplegado con Helm">
+	<meta property="og:locale" content="es">
+	<meta property="og:type" content="article">
+		<meta property="article:section" content="posts">
+		<meta property="article:published_time" content="2026-10-01T00:00:00+00:00">
+		<meta property="article:modified_time" content="2026-10-01T00:00:00+00:00">
+		<meta property="article:tag" content="OpenTofu">
+		<meta property="article:tag" content="Ansible">
+		<meta property="article:tag" content="Kubernetes">
+		<meta property="article:tag" content="K3s">
+		<meta property="article:tag" content="Helm">
+		<meta property="article:tag" content="NFS">
+		<meta property="og:image" content="http://localhost:1313/posts/iac/cluster-k3s/featured.png">
+
+  
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:image" content="http://localhost:1313/posts/iac/cluster-k3s/featured.png">
+	<meta name="twitter:title" content="Despliegue de un clúster K3s con OpenTofu y Ansible">
+	<meta name="twitter:description" content="Aprovisionamiento de un clúster k3s sobre Multipass con OpenTofu, configuración con Ansible y almacenamiento compartido vía NFS desplegado con Helm">
+
+  
+  
+  
+  
+    
+      
+    
+  
+    
+  
+    
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+    
+  
+  
+  <link
+    type="text/css"
+    rel="stylesheet"
+    href="/css/main.bundle.min.79eceadedeffff2cb9dc53758e28fcce528399b0e3c7004ed6cc6c17838e44790bec0cff7d6b2c39a6cf0acc41a2509594fe8e23d28c25ed2904ac9cbdd40c3c.css"
+    integrity="sha512-eezq3t7//yy53FN1jij8zlKDmbDjxwBO1sxsF4OORHkL7Az/fWssOabPCsxBolCVlP6OI9KMJe0pBKycvdQMPA==">
+
+  
+  
+  <script
+    type="text/javascript"
+    src="/js/appearance.min.20c0df9d0135e3169f5efa2324d182120b3c04dc95fa7a0e56ff0dd9bc25f32b13ca5cca43a34b1f323c4eed789f01e3359bcc182c8c5580a4a2eca80cf89ddf.js"
+    integrity="sha512-IMDfnQE14xafXvojJNGCEgs8BNyV&#43;noOVv8N2bwl8ysTylzKQ6NLHzI8Tu14nwHjNZvMGCyMVYCkouyoDPid3w=="></script>
+  
+
+
+  
+  
+  
+  
+  
+  
+    
+    <script defer src="/lib/zoom/zoom.min.umd.a527109b68c082a70f3697716dd72a9d5aa8b545cf800cecbbc7399f2ca6f6e0ce3e431f2062b48bbfa47c9ea42822714060bef309be073f49b9c0e30d318d7b.js" integrity="sha512-pScQm2jAgqcPNpdxbdcqnVqotUXPgAzsu8c5nyym9uDOPkMfIGK0i7&#43;kfJ6kKCJxQGC&#43;8wm&#43;Bz9JucDjDTGNew=="></script>
+    
+    <script defer src="/js/medium-zoom.67b71ecf7eecce38673a92244d1ffd93edb5f1aeedd12e725d0f67fe901828fa3562f6a6d64ad290b36b7d7034b8ea16e63486d75d957bcf6a2732923e5d46e6.js" integrity="sha512-Z7cez37szjhnOpIkTR/9k&#43;218a7t0S5yXQ9n/pAYKPo1Yvam1krSkLNrfXA0uOoW5jSG112Ve89qJzKSPl1G5g=="></script>
+  
+  
+  
+  
+
+  
+  
+  
+    
+  
+  
+    
+    
+    
+  
+  
+  
+  
+  
+  
+  
+  
+    
+    <script
+      defer
+      type="text/javascript"
+      id="script-bundle"
+      src="/js/main.bundle.min.be4a11c293f9b8ab20ab872f73c6b0c584fcba4a0df2c8ef7f414a5805c0ddab955ac23bec4a6d92a06087498d445cb2bf26a6602a27981980efe2bda70104a4.js"
+      integrity="sha512-vkoRwpP5uKsgq4cvc8awxYT8ukoN8sjvf0FKWAXA3auVWsI77EptkqBgh0mNRFyyvyamYConmBmA7&#43;K9pwEEpA=="
+      data-copy="Copiar"
+      data-copied="Copiado"></script>
+  
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+  
+
+  
+  <script type="application/ld+json">
+  [{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "articleSection": "Posts",
+    "name": "Despliegue de un clúster K3s con OpenTofu y Ansible",
+    "headline": "Despliegue de un clúster K3s con OpenTofu y Ansible",
+    "description": "Aprovisionamiento de un clúster k3s sobre Multipass con OpenTofu, configuración con Ansible y almacenamiento compartido vía NFS desplegado con Helm",
+    "inLanguage": "es",
+    "url" : "http://localhost:1313/posts/iac/cluster-k3s/",
+    "author" : {
+      "@type": "Person",
+      "name": "Roberto Martín Rivera",
+      "image": "http://localhost:1313/img/author.jpg",
+      "sameAs": ["https://github.com/Ryberxy"]
+    },
+    "copyrightYear": "2026",
+    "dateCreated": "2026-10-01T00:00:00\u002b00:00",
+    "datePublished": "2026-10-01T00:00:00\u002b00:00",
+    
+    "dateModified": "2026-10-01T00:00:00\u002b00:00",
+    
+    "keywords": ["OpenTofu","Ansible","Kubernetes","k3s","Helm","NFS","Makefile"],
+    
+    "mainEntityOfPage": "http://localhost:1313/posts/iac/cluster-k3s/",
+    "wordCount":  1831 
+  }]
+  </script>
+
+
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+</head>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <body class="flex flex-col h-screen m-auto leading-7 max-w-7xl px-6 sm:px-14 md:px-24 lg:px-32 text-lg bg-neutral text-neutral-900 dark:bg-neutral-800 dark:text-neutral bf-scrollbar">
+    <div id="the-top" class="absolute flex self-center">
+      <a
+        class="px-3 py-1 text-sm -translate-y-8 rounded-b-lg bg-primary-200 focus:translate-y-0 dark:bg-neutral-600"
+        href="#main-content">
+        <span class="font-bold text-primary-600 pe-2 dark:text-primary-400">&darr;</span>
+        Ir al contenido
+      </a>
+    </div>
+    <header>
+      
+      
+        <div class="main-menu flex items-center w-full gap-2 p-1 pl-0">
+  
+  
+    <a href="/" class="text-base font-medium truncate min-w-0 shrink">
+      Blog Ryberxy
+    </a>
+  
+  <div class="flex items-center ms-auto">
+    <div class="hidden md:flex">
+      <nav aria-label="" class="flex items-center gap-x-5 h-12">
+  
+    
+      
+  
+    <a
+      href="/#sobre-mi"
+      
+      class="flex items-center bf-icon-color-hover"
+      aria-label="Sobre mí"
+      title="">
+      
+      
+        <span class="text-sm font-medium break-normal">
+          Sobre mí
+        </span>
+      
+    </a>
+  
+
+    
+      
+  
+    <a
+      href="/#stack"
+      
+      class="flex items-center bf-icon-color-hover"
+      aria-label="Stack"
+      title="">
+      
+      
+        <span class="text-sm font-medium break-normal">
+          Stack
+        </span>
+      
+    </a>
+  
+
+    
+      
+  
+    <a
+      href="/posts/"
+      
+      class="flex items-center bf-icon-color-hover"
+      aria-label="Posts"
+      title="Posts">
+      
+      
+        <span class="text-sm font-medium break-normal">
+          Posts
+        </span>
+      
+    </a>
+  
+
+    
+  
+
+  
+
+  
+
+  
+    <div class="flex items-center">
+      <button
+        id="appearance-switcher"
+        aria-label="Cambiar a modo oscuro"
+        type="button"
+        class="text-sm bf-icon-color-hover"
+        title="Cambiar a modo oscuro">
+        <div class="flex items-center justify-center dark:hidden">
+          <span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M32 256c0-123.8 100.3-224 223.8-224c11.36 0 29.7 1.668 40.9 3.746c9.616 1.777 11.75 14.63 3.279 19.44C245 86.5 211.2 144.6 211.2 207.8c0 109.7 99.71 193 208.3 172.3c9.561-1.805 16.28 9.324 10.11 16.95C387.9 448.6 324.8 480 255.8 480C132.1 480 32 379.6 32 256z"/></svg>
+</span>
+        </div>
+        <div class="items-center justify-center hidden dark:flex">
+          <span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 159.1c-53.02 0-95.1 42.98-95.1 95.1S202.1 351.1 256 351.1s95.1-42.98 95.1-95.1S309 159.1 256 159.1zM509.3 347L446.1 255.1l63.15-91.01c6.332-9.125 1.104-21.74-9.826-23.72l-109-19.7l-19.7-109c-1.975-10.93-14.59-16.16-23.72-9.824L256 65.89L164.1 2.736c-9.125-6.332-21.74-1.107-23.72 9.824L121.6 121.6L12.56 141.3C1.633 143.2-3.596 155.9 2.736 164.1L65.89 256l-63.15 91.01c-6.332 9.125-1.105 21.74 9.824 23.72l109 19.7l19.7 109c1.975 10.93 14.59 16.16 23.72 9.824L256 446.1l91.01 63.15c9.127 6.334 21.75 1.107 23.72-9.822l19.7-109l109-19.7C510.4 368.8 515.6 356.1 509.3 347zM256 383.1c-70.69 0-127.1-57.31-127.1-127.1c0-70.69 57.31-127.1 127.1-127.1s127.1 57.3 127.1 127.1C383.1 326.7 326.7 383.1 256 383.1z"/></svg>
+</span>
+        </div>
+      </button>
+    </div>
+  
+
+  
+    <button
+      id="search-button"
+      aria-label="Buscar (/)"
+      class="flex items-center gap-2 rounded-lg border bf-border-color bf-border-color-hover bg-neutral-100/50 px-2 py-1 text-sm text-neutral-500 transition-colors hover:text-primary-600 dark:bg-neutral-800/50 dark:text-neutral-400 dark:hover:text-primary-400"
+      title="Buscar (/)">
+      <span class="relative block icon"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="search" class="svg-inline--fa fa-search fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+</span>
+      <kbd
+        id="search-shortcut-hint"
+        class="pointer-events-none font-sans text-xs text-neutral-500 dark:text-neutral-400"
+        aria-hidden="true">
+        ⌘K
+      </kbd>
+    </button>
+  
+</nav>
+
+
+
+    </div>
+    <div class="flex md:hidden">
+      
+<div class="mobile-header-row relative flex items-center h-14 gap-4">
+  
+
+  
+    <button
+      id="appearance-switcher-mobile"
+      type="button"
+      aria-label="Cambiar a modo oscuro"
+      title="Cambiar a modo oscuro"
+      class="flex items-center justify-center text-neutral-900 hover:text-primary-600 dark:text-neutral-200 dark:hover:text-primary-400">
+      <div class="dark:hidden">
+        <span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M32 256c0-123.8 100.3-224 223.8-224c11.36 0 29.7 1.668 40.9 3.746c9.616 1.777 11.75 14.63 3.279 19.44C245 86.5 211.2 144.6 211.2 207.8c0 109.7 99.71 193 208.3 172.3c9.561-1.805 16.28 9.324 10.11 16.95C387.9 448.6 324.8 480 255.8 480C132.1 480 32 379.6 32 256z"/></svg>
+</span>
+      </div>
+      <div class="hidden dark:block">
+        <span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 159.1c-53.02 0-95.1 42.98-95.1 95.1S202.1 351.1 256 351.1s95.1-42.98 95.1-95.1S309 159.1 256 159.1zM509.3 347L446.1 255.1l63.15-91.01c6.332-9.125 1.104-21.74-9.826-23.72l-109-19.7l-19.7-109c-1.975-10.93-14.59-16.16-23.72-9.824L256 65.89L164.1 2.736c-9.125-6.332-21.74-1.107-23.72 9.824L121.6 121.6L12.56 141.3C1.633 143.2-3.596 155.9 2.736 164.1L65.89 256l-63.15 91.01c-6.332 9.125-1.105 21.74 9.824 23.72l109 19.7l19.7 109c1.975 10.93 14.59 16.16 23.72 9.824L256 446.1l91.01 63.15c9.127 6.334 21.75 1.107 23.72-9.822l19.7-109l109-19.7C510.4 368.8 515.6 356.1 509.3 347zM256 383.1c-70.69 0-127.1-57.31-127.1-127.1c0-70.69 57.31-127.1 127.1-127.1s127.1 57.3 127.1 127.1C383.1 326.7 326.7 383.1 256 383.1z"/></svg>
+</span>
+      </div>
+    </button>
+  
+
+  
+    <button
+      id="search-button-mobile"
+      aria-label="Buscar (/)"
+      class="flex items-center justify-center bf-icon-color-hover"
+      title="Buscar (/)">
+      <span class="relative block icon"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="search" class="svg-inline--fa fa-search fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+</span>
+    </button>
+  
+
+  
+    <input type="checkbox" id="mobile-menu-toggle" autocomplete="off" class="hidden peer">
+    <label
+      for="mobile-menu-toggle"
+      tabindex="0"
+      role="button"
+      aria-expanded="false"
+      aria-controls="mobile-menu-dialog"
+      aria-label=""
+      class="flex items-center justify-center cursor-pointer bf-icon-color-hover">
+      <span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M0 96C0 78.33 14.33 64 32 64H416C433.7 64 448 78.33 448 96C448 113.7 433.7 128 416 128H32C14.33 128 0 113.7 0 96zM0 256C0 238.3 14.33 224 32 224H416C433.7 224 448 238.3 448 256C448 273.7 433.7 288 416 288H32C14.33 288 0 273.7 0 256zM416 448H32C14.33 448 0 433.7 0 416C0 398.3 14.33 384 32 384H416C433.7 384 448 398.3 448 416C448 433.7 433.7 448 416 448z"/></svg>
+</span>
+    </label>
+
+    <div
+      id="mobile-menu-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-label=""
+      style="scrollbar-gutter: stable;"
+      class="z-50 invisible overflow-y-auto opacity-0 transition-[opacity,visibility] duration-300 peer-checked:visible peer-checked:opacity-100
+      
+        fixed inset-0 px-6 py-20 bg-neutral-50/97 dark:bg-neutral-900/99
+      
+      bf-scrollbar">
+      <label
+        for="mobile-menu-toggle"
+        tabindex="0"
+        role="button"
+        aria-expanded="false"
+        aria-controls="mobile-menu-dialog"
+        class="fixed end-8 top-5 z-50 h-12 w-12 rounded-full flex items-center justify-center cursor-pointer select-none bf-icon-color-hover border bf-border-color bf-border-color-hover bg-neutral-50 dark:bg-neutral-900">
+        <span class="sr-only"></span>
+        <span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M310.6 361.4c12.5 12.5 12.5 32.75 0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3L54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75 0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-105.4 105.4L310.6 361.4z"/></svg>
+</span>
+      </label>
+      <nav
+        aria-label=""
+        class="mx-auto max-w-md space-y-6">
+        
+  
+    
+    <div class="px-2">
+      <div class="flex items-center gap-4">
+        <a
+          href="/#sobre-mi"
+          aria-label="Sobre mí"
+          
+          class="flex grow items-center gap-4 group bf-icon-color-hover text-neutral-700 dark:text-neutral-200">
+          
+          <span title="" class="text-2xl font-bold tracking-tight">
+            Sobre mí
+          </span>
+        </a>
+        
+      </div>
+
+      
+    </div>
+  
+    
+    <div class="px-2">
+      <div class="flex items-center gap-4">
+        <a
+          href="/#stack"
+          aria-label="Stack"
+          
+          class="flex grow items-center gap-4 group bf-icon-color-hover text-neutral-700 dark:text-neutral-200">
+          
+          <span title="" class="text-2xl font-bold tracking-tight">
+            Stack
+          </span>
+        </a>
+        
+      </div>
+
+      
+    </div>
+  
+    
+    <div class="px-2">
+      <div class="flex items-center gap-4">
+        <a
+          href="/posts/"
+          aria-label="Posts"
+          
+          class="flex grow items-center gap-4 group bf-icon-color-hover text-neutral-700 dark:text-neutral-200">
+          
+          <span title="Posts" class="text-2xl font-bold tracking-tight">
+            Posts
+          </span>
+        </a>
+        
+      </div>
+
+      
+    </div>
+  
+
+        
+  
+
+        
+  
+
+      </nav>
+    </div>
+  
+</div>
+
+
+
+
+
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+      
+    </header>
+    <div class="relative flex flex-col grow">
+      <main id="main-content" class="grow">
+        
+  
+  
+
+  
+  
+  
+
+  <div class="rbx-layout">
+    
+      <aside class="rbx-sidebar print:hidden">
+        
+
+<nav class="text-sm">
+  <div class="mb-3 px-1">
+    <input
+      type="text"
+      id="rbx-search"
+      placeholder="Búsqueda"
+      class="w-full rounded border border-neutral-600/50 bg-black/20 px-2 py-1.5 text-xs text-neutral-200 placeholder:text-neutral-500 focus:outline-none" />
+  </div>
+  <p class="rbx-tree-root mb-2 px-1 text-xs font-semibold uppercase tracking-wide">Posts</p>
+  <ul id="rbx-tree">
+    
+      
+  
+  
+  
+  <li>
+    <details class="group" >
+      <summary class="flex cursor-pointer select-none items-center gap-2 rounded px-1 py-1 hover:bg-white/10">
+        <svg class="h-3.5 w-3.5 shrink-0 text-neutral-500 transition-transform duration-200 group-open:rotate-90" width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 0 1 .02-1.06L11.168 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06-.02Z" clip-rule="evenodd" />
+        </svg>
+        <span>Base de datos</span>
+      </summary>
+      <ul>
+        
+        
+          
+  
+  
+  
+  <li>
+    <a href="/posts/base-de-datos/interconexi%C3%B3n-bd/"
+      class="block rounded px-1 py-1 text-neutral-300 hover:text-white">
+      Interconexión de servidores de base de datos
+    </a>
+  </li>
+
+        
+      </ul>
+    </details>
+  </li>
+
+    
+      
+  
+  
+  
+  <li>
+    <details class="group" open>
+      <summary class="flex cursor-pointer select-none items-center gap-2 rounded px-1 py-1 hover:bg-white/10 rbx-tree-active">
+        <svg class="h-3.5 w-3.5 shrink-0 text-neutral-500 transition-transform duration-200 group-open:rotate-90" width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 0 1 .02-1.06L11.168 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06-.02Z" clip-rule="evenodd" />
+        </svg>
+        <span>IAC</span>
+      </summary>
+      <ul>
+        
+        
+          
+  
+  
+  
+  <li>
+    <a href="/posts/iac/cluster-k3s/"
+      class="block rounded px-1 py-1 font-medium text-primary-400">
+      Despliegue de un clúster K3s con OpenTofu y Ansible
+    </a>
+  </li>
+
+        
+      </ul>
+    </details>
+  </li>
+
+    
+      
+  
+  
+  
+  <li>
+    <details class="group" >
+      <summary class="flex cursor-pointer select-none items-center gap-2 rounded px-1 py-1 hover:bg-white/10">
+        <svg class="h-3.5 w-3.5 shrink-0 text-neutral-500 transition-transform duration-200 group-open:rotate-90" width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 0 1 .02-1.06L11.168 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06-.02Z" clip-rule="evenodd" />
+        </svg>
+        <span>Redes</span>
+      </summary>
+      <ul>
+        
+        
+      </ul>
+    </details>
+  </li>
+
+    
+      
+  
+  
+  
+  <li>
+    <details class="group" >
+      <summary class="flex cursor-pointer select-none items-center gap-2 rounded px-1 py-1 hover:bg-white/10">
+        <svg class="h-3.5 w-3.5 shrink-0 text-neutral-500 transition-transform duration-200 group-open:rotate-90" width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 0 1 .02-1.06L11.168 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06-.02Z" clip-rule="evenodd" />
+        </svg>
+        <span>Sistemas</span>
+      </summary>
+      <ul>
+        
+        
+          
+  
+  
+  
+  <li>
+    <a href="/posts/sistemas/compilacion-kernel/"
+      class="block rounded px-1 py-1 text-neutral-300 hover:text-white">
+      Compilación_kernel_Roberto
+    </a>
+  </li>
+
+        
+      </ul>
+    </details>
+  </li>
+
+    
+      
+  
+  
+  
+  <li>
+    <details class="group" >
+      <summary class="flex cursor-pointer select-none items-center gap-2 rounded px-1 py-1 hover:bg-white/10">
+        <svg class="h-3.5 w-3.5 shrink-0 text-neutral-500 transition-transform duration-200 group-open:rotate-90" width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 0 1 .02-1.06L11.168 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06-.02Z" clip-rule="evenodd" />
+        </svg>
+        <span>VPN</span>
+      </summary>
+      <ul>
+        
+        
+          
+  
+  
+  
+  <li>
+    <a href="/posts/vpn/acceso-remoto-openvpn/"
+      class="block rounded px-1 py-1 text-neutral-300 hover:text-white">
+      VPN de acceso remoto con OpenVPN
+    </a>
+  </li>
+
+        
+          
+  
+  
+  
+  <li>
+    <a href="/posts/vpn/acceso-remoto-wireguard/"
+      class="block rounded px-1 py-1 text-neutral-300 hover:text-white">
+      VPN de acceso remoto con WireGuard
+    </a>
+  </li>
+
+        
+          
+  
+  
+  
+  <li>
+    <a href="/posts/vpn/site-to-site-openvpn/"
+      class="block rounded px-1 py-1 text-neutral-300 hover:text-white">
+      VPN Site to Site con OpenVPN
+    </a>
+  </li>
+
+        
+          
+  
+  
+  
+  <li>
+    <a href="/posts/vpn/site-to-site-wireguard/"
+      class="block rounded px-1 py-1 text-neutral-300 hover:text-white">
+      VPN Site to Site con WireGuard
+    </a>
+  </li>
+
+        
+      </ul>
+    </details>
+  </li>
+
+    
+    
+  </ul>
+</nav>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var input = document.getElementById('rbx-search');
+  var tree = document.getElementById('rbx-tree');
+  if (!input || !tree) return;
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    var items = tree.querySelectorAll('li');
+    items.forEach(function (li) { li.style.display = ''; });
+    if (!q) return;
+    tree.querySelectorAll('a').forEach(function (a) {
+      var li = a.closest('li');
+      if (!a.textContent.toLowerCase().includes(q)) {
+        li.style.display = 'none';
+      } else {
+        var d = a.closest('details');
+        while (d) {
+          d.open = true;
+          var pli = d.closest('li');
+          if (pli) pli.style.display = '';
+          d = d.parentElement ? d.parentElement.closest('details') : null;
+        }
+      }
+    });
+    tree.querySelectorAll('details').forEach(function (d) {
+      var visible = Array.from(d.querySelectorAll('a')).some(function (a) {
+        return a.closest('li').style.display !== 'none';
+      });
+      var li = d.closest('li');
+      if (li) li.style.display = visible ? '' : 'none';
+    });
+  });
+});
+</script>
+
+
+
+
+
+      </aside>
+    
+
+    <div class="rbx-main">
+      
+      
+      
+      
+      <article>
+        
+          
+          
+          
+          
+            
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+    
+  
+    
+  
+    
+  
+
+
+
+
+  
+    
+    
+      
+      
+    
+  
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+    
+  
+    
+  
+    
+  
+
+
+
+
+
+
+  
+    
+    
+      
+      
+    
+  
+
+
+
+
+
+
+  <div class="overflow-hidden rounded-md h-36 md:h-56 lg:h-72 nozoom">
+    <img
+      src="/posts/iac/cluster-k3s/featured_hu_95cb2de1ad879c49.png"
+      role="presentation"
+      loading="eager"
+      decoding="async"
+      fetchpriority="high"
+      class="w-full h-full nozoom object-cover"
+       />
+  </div>
+
+
+
+
+
+
+<div class="single_hero_background nozoom fixed inset-x-0 top-0 h-[800px]">
+  
+    
+    
+    
+    <img
+      id="background-image-main"
+      src="/posts/iac/cluster-k3s/featured_hu_95cb2de1ad879c49.png"
+      role="presentation"
+      loading="eager"
+      decoding="async"
+      fetchpriority="high"
+      class="absolute inset-0 h-full w-full object-cover"
+       />
+  
+  <div
+    class="from-neutral absolute inset-0 bg-gradient-to-t to-transparent mix-blend-normal dark:from-neutral-800"></div>
+  <div
+    class="from-neutral to-neutral absolute inset-0 bg-gradient-to-t opacity-30 mix-blend-normal dark:from-neutral-800 dark:to-neutral-800 dark:opacity-60"></div>
+</div>
+
+
+
+  <div
+    id="background-blur"
+    class="fixed opacity-0 inset-x-0 top-0 h-full single_hero_background nozoom backdrop-blur-xl bg-neutral-100/75 dark:bg-neutral-800/60"></div>
+  
+  
+  <script
+    type="text/javascript"
+    src="/js/background-blur.min.2b8477cfbdb6843f33fd6f7c9a9a1343c895e878a7b55c32979586e6c6ba1018372c0c66a011abdbd7bc1a912f98ea249043c82bfae8fb04a0f37f854ee1e920.js"
+    integrity="sha512-K4R3z722hD8z/W98mpoTQ8iV6HintVwyl5WG5sa6EBg3LAxmoBGr29e8GpEvmOokkEPIK/ro&#43;wSg83&#43;FTuHpIA=="
+    data-blur-id="background-blur"
+    data-image-id="background-image-main"
+    data-image-url="/posts/iac/cluster-k3s/featured.png"></script>
+
+
+          
+        
+
+        <div class="rbx-content-card">
+        <header id="single_header" class="rbx-hero-header">
+          
+          
+          
+            <div class="rbx-hero-avatar"><img src="/img/author.jpg" alt=""></div>
+          
+          
+            <p class="rbx-hero-author">Roberto Martín Rivera</p>
+          
+          <div class="rbx-hero-meta">
+            
+
+
+
+
+
+  
+  
+
+
+
+  
+
+  
+  
+  
+    
+  
+
+  
+
+  
+    
+  
+
+  
+
+  
+    
+  
+
+  
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  <div class="flex flex-row flex-wrap items-center">
+    
+    
+      <time datetime="2026-10-01T00:00:00&#43;00:00">1 octubre 2026</time><span class="px-2 text-primary-500">&middot;</span><span>1831 palabras</span><span class="px-2 text-primary-500">&middot;</span><span title="Tiempo de lectura">9 mins</span>
+    
+
+    
+    
+  </div>
+
+  
+
+  
+  
+    <div class="flex flex-row flex-wrap items-center">
+      
+        
+      
+        
+      
+        
+      
+        
+          
+            
+              
+                <a class="relative mt-[0.5rem] me-2" href="/tags/opentofu/">
+                  <span class="flex cursor-pointer">
+  
+  
+  
+  
+    <span
+      class="rounded-md border border-primary-400 px-1 py-[1px] text-xs font-normal text-primary-700 dark:border-primary-600 dark:text-primary-400">
+  
+    OpenTofu
+  </span>
+</span>
+
+                </a>
+              
+            
+          
+            
+              
+                <a class="relative mt-[0.5rem] me-2" href="/tags/ansible/">
+                  <span class="flex cursor-pointer">
+  
+  
+  
+  
+    <span
+      class="rounded-md border border-primary-400 px-1 py-[1px] text-xs font-normal text-primary-700 dark:border-primary-600 dark:text-primary-400">
+  
+    Ansible
+  </span>
+</span>
+
+                </a>
+              
+            
+          
+            
+              
+                <a class="relative mt-[0.5rem] me-2" href="/tags/kubernetes/">
+                  <span class="flex cursor-pointer">
+  
+  
+  
+  
+    <span
+      class="rounded-md border border-primary-400 px-1 py-[1px] text-xs font-normal text-primary-700 dark:border-primary-600 dark:text-primary-400">
+  
+    Kubernetes
+  </span>
+</span>
+
+                </a>
+              
+            
+          
+            
+              
+                <a class="relative mt-[0.5rem] me-2" href="/tags/k3s/">
+                  <span class="flex cursor-pointer">
+  
+  
+  
+  
+    <span
+      class="rounded-md border border-primary-400 px-1 py-[1px] text-xs font-normal text-primary-700 dark:border-primary-600 dark:text-primary-400">
+  
+    K3s
+  </span>
+</span>
+
+                </a>
+              
+            
+          
+            
+              
+                <a class="relative mt-[0.5rem] me-2" href="/tags/helm/">
+                  <span class="flex cursor-pointer">
+  
+  
+  
+  
+    <span
+      class="rounded-md border border-primary-400 px-1 py-[1px] text-xs font-normal text-primary-700 dark:border-primary-600 dark:text-primary-400">
+  
+    Helm
+  </span>
+</span>
+
+                </a>
+              
+            
+          
+            
+              
+                <a class="relative mt-[0.5rem] me-2" href="/tags/nfs/">
+                  <span class="flex cursor-pointer">
+  
+  
+  
+  
+    <span
+      class="rounded-md border border-primary-400 px-1 py-[1px] text-xs font-normal text-primary-700 dark:border-primary-600 dark:text-primary-400">
+  
+    NFS
+  </span>
+</span>
+
+                </a>
+              
+            
+          
+            
+              
+                <a class="relative mt-[0.5rem] me-2" href="/tags/makefile/">
+                  <span class="flex cursor-pointer">
+  
+  
+  
+  
+    <span
+      class="rounded-md border border-primary-400 px-1 py-[1px] text-xs font-normal text-primary-700 dark:border-primary-600 dark:text-primary-400">
+  
+    Makefile
+  </span>
+</span>
+
+                </a>
+              
+            
+          
+        
+      
+    </div>
+  
+
+
+          </div>
+          <h1 class="rbx-hero-title">
+            Despliegue de un clúster K3s con OpenTofu y Ansible
+          </h1>
+        </header>
+
+        <section class="max-w-full mt-0 prose dark:prose-invert">
+          <div class="min-w-0 min-h-0">
+            
+
+            <div class="article-content mb-20">
+              
+<h1 class="relative group">1. INTRODUCCIÓN Y ARQUITECTURA
+    <div id="1-introducción-y-arquitectura" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 -start-6 not-prose group-hover:opacity-100 select-none">
+        <a class="text-primary-300 dark:text-neutral-700 !no-underline" href="#1-introducci%c3%b3n-y-arquitectura" aria-label="Ancla">#</a>
+    </span>
+    
+</h1>
+<p>El objetivo de esta práctica es levantar un clúster de Kubernetes (k3s) completo de forma totalmente automatizada, combinando tres herramientas que cubren cada una una capa distinta del despliegue:</p>
+<ul>
+<li><strong>OpenTofu</strong> — crea y destruye la infraestructura (las VMs) de forma declarativa.</li>
+<li><strong>Ansible</strong> — instala y configura el software dentro de esas VMs (k3s, NFS, etc.).</li>
+<li><strong>Helm</strong> — despliega aplicaciones dentro del propio clúster de Kubernetes ya funcionando.</li>
+</ul>
+<p>El clúster está formado por 4 nodos, gestionados como VMs de <strong>Multipass</strong>:</p>
+<ul>
+<li><code>k3s-master</code> — nodo master de k3s</li>
+<li><code>k3s-worker1</code> y <code>k3s-worker2</code> — nodos worker de k3s</li>
+<li><code>nfs-server</code> — servidor NFS que proporciona almacenamiento compartido al clúster</li>
+</ul>
+<p>Todo el flujo (crear VMs → generar inventario → instalar k3s → desplegar almacenamiento) se orquesta con un único <code>Makefile</code>, de modo que levantar el clúster completo desde cero es tan sencillo como ejecutar <code>make all</code>.</p>
+
+<h1 class="relative group">2. REQUISITOS PREVIOS
+    <div id="2-requisitos-previos" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 -start-6 not-prose group-hover:opacity-100 select-none">
+        <a class="text-primary-300 dark:text-neutral-700 !no-underline" href="#2-requisitos-previos" aria-label="Ancla">#</a>
+    </span>
+    
+</h1>
+<p>Antes de ejecutar el proyecto es necesario tener instaladas las siguientes herramientas en la máquina anfitriona:</p>
+<ul>
+<li><a href="https://multipass.run/"  target="_blank" rel="noreferrer">Multipass</a></li>
+<li><a href="https://opentofu.org/"  target="_blank" rel="noreferrer">OpenTofu</a></li>
+<li><a href="https://www.ansible.com/"  target="_blank" rel="noreferrer">Ansible</a></li>
+<li><a href="https://helm.sh/"  target="_blank" rel="noreferrer">Helm</a></li>
+<li><code>jq</code></li>
+</ul>
+<div class="highlight-wrapper"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo apt install jq</span></span></code></pre></div></div>
+<p>También hace falta tener un par de claves SSH generadas, ya que la clave pública se inyectará en cada VM mediante <code>cloud-init</code> para que Ansible pueda conectarse sin contraseña.</p>
+
+<h1 class="relative group">3. OPENTOFU: CREACIÓN DE LA INFRAESTRUCTURA
+    <div id="3-opentofu-creación-de-la-infraestructura" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 -start-6 not-prose group-hover:opacity-100 select-none">
+        <a class="text-primary-300 dark:text-neutral-700 !no-underline" href="#3-opentofu-creaci%c3%b3n-de-la-infraestructura" aria-label="Ancla">#</a>
+    </span>
+    
+</h1>
+<p>OpenTofu es la alternativa open source a Terraform, y aquí se usa para crear y destruir las VMs de Multipass de forma declarativa.</p>
+
+<h2 class="relative group">3.1 PROVIDER
+    <div id="31-provider" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 -start-6 not-prose group-hover:opacity-100 select-none">
+        <a class="text-primary-300 dark:text-neutral-700 !no-underline" href="#31-provider" aria-label="Ancla">#</a>
+    </span>
+    
+</h2>
+<p>En <code>opentofu/provider.tf</code> se define el provider de Multipass que va a usar OpenTofu:</p>
+<div class="highlight-wrapper"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-hcl" data-lang="hcl"><span class="line"><span class="cl"><span class="k">terraform</span> {
+</span></span><span class="line"><span class="cl">  <span class="k">required_providers</span> {
+</span></span><span class="line"><span class="cl"><span class="n">    multipass</span> <span class="o">=</span> {
+</span></span><span class="line"><span class="cl"><span class="n">      source</span>  <span class="o">=</span> <span class="s2">&#34;larstobi/multipass&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">      version</span> <span class="o">=</span> <span class="s2">&#34;~&gt; 1.4&#34;</span>
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">  }
+</span></span><span class="line"><span class="cl">}</span></span></code></pre></div></div>
+
+<h2 class="relative group">3.2 VARIABLES DE LOS NODOS
+    <div id="32-variables-de-los-nodos" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 -start-6 not-prose group-hover:opacity-100 select-none">
+        <a class="text-primary-300 dark:text-neutral-700 !no-underline" href="#32-variables-de-los-nodos" aria-label="Ancla">#</a>
+    </span>
+    
+</h2>
+<p>En <code>opentofu/variables.tf</code> se define el clúster completo como un mapa de objetos. Cada nodo tiene su número de CPUs, memoria, disco y rol:</p>
+<div class="highlight-wrapper"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-hcl" data-lang="hcl"><span class="line"><span class="cl"><span class="k">variable</span> <span class="s2">&#34;nodes&#34;</span> {
+</span></span><span class="line"><span class="cl"><span class="n">  description</span> <span class="o">=</span> <span class="s2">&#34;Definición de los nodos del clúster&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">  type</span> <span class="o">=</span> <span class="k">map</span><span class="p">(</span><span class="k">object</span><span class="p">(</span>{
+</span></span><span class="line"><span class="cl"><span class="n">    cpus</span>   <span class="o">=</span> <span class="k">number</span>
+</span></span><span class="line"><span class="cl"><span class="n">    memory</span> <span class="o">=</span> <span class="k">string</span>
+</span></span><span class="line"><span class="cl"><span class="n">    disk</span>   <span class="o">=</span> <span class="k">string</span>
+</span></span><span class="line"><span class="cl"><span class="n">    role</span>   <span class="o">=</span> <span class="k">string</span>
+</span></span><span class="line"><span class="cl">  }<span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">  default</span> <span class="o">=</span> {
+</span></span><span class="line"><span class="cl"><span class="n">    &#34;k3s-master&#34;</span>  <span class="o">=</span><span class="n"> { cpus</span> <span class="o">=</span><span class="n"> 2, memory</span> <span class="o">=</span><span class="n"> &#34;2G&#34;, disk</span> <span class="o">=</span><span class="n"> &#34;10G&#34;, role</span> <span class="o">=</span> <span class="s2">&#34;master&#34;</span> }
+</span></span><span class="line"><span class="cl"><span class="n">    &#34;k3s-worker1&#34;</span> <span class="o">=</span><span class="n"> { cpus</span> <span class="o">=</span><span class="n"> 2, memory</span> <span class="o">=</span><span class="n"> &#34;2G&#34;, disk</span> <span class="o">=</span><span class="n"> &#34;10G&#34;, role</span> <span class="o">=</span> <span class="s2">&#34;worker1&#34;</span> }
+</span></span><span class="line"><span class="cl"><span class="n">    &#34;k3s-worker2&#34;</span> <span class="o">=</span><span class="n"> { cpus</span> <span class="o">=</span><span class="n"> 2, memory</span> <span class="o">=</span><span class="n"> &#34;2G&#34;, disk</span> <span class="o">=</span><span class="n"> &#34;10G&#34;, role</span> <span class="o">=</span> <span class="s2">&#34;worker2&#34;</span> }
+</span></span><span class="line"><span class="cl"><span class="n">    &#34;nfs-server&#34;</span>  <span class="o">=</span><span class="n"> { cpus</span> <span class="o">=</span><span class="n"> 1, memory</span> <span class="o">=</span><span class="n"> &#34;1G&#34;, disk</span> <span class="o">=</span><span class="n"> &#34;20G&#34;, role</span> <span class="o">=</span> <span class="s2">&#34;nfs&#34;</span> }
+</span></span><span class="line"><span class="cl">  }
+</span></span><span class="line"><span class="cl">}</span></span></code></pre></div></div>
+<p>Para añadir un nodo nuevo al clúster basta con añadir una entrada más a este mapa, no hay que tocar nada más.</p>
+
+<h2 class="relative group">3.3 CREACIÓN DE LAS INSTANCIAS
+    <div id="33-creación-de-las-instancias" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 -start-6 not-prose group-hover:opacity-100 select-none">
+        <a class="text-primary-300 dark:text-neutral-700 !no-underline" href="#33-creaci%c3%b3n-de-las-instancias" aria-label="Ancla">#</a>
+    </span>
+    
+</h2>
+<p>En <code>opentofu/main.tf</code> se itera sobre <code>var.nodes</code> para crear una instancia de Multipass por cada nodo definido. Cada una recibe su propio <code>cloud-init</code> según el rol que le corresponda:</p>
+<div class="highlight-wrapper"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-hcl" data-lang="hcl"><span class="line"><span class="cl"><span class="k">resource</span> <span class="s2">&#34;multipass_instance&#34; &#34;nodes&#34;</span> {
+</span></span><span class="line"><span class="cl"><span class="n">  for_each</span> <span class="o">=</span> <span class="k">var</span><span class="p">.</span><span class="k">nodes</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">  name</span>   <span class="o">=</span> <span class="k">each</span><span class="p">.</span><span class="k">key</span>
+</span></span><span class="line"><span class="cl"><span class="n">  image</span>  <span class="o">=</span> <span class="s2">&#34;24.04&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">  cpus</span>   <span class="o">=</span> <span class="k">each</span><span class="p">.</span><span class="k">value</span><span class="p">.</span><span class="k">cpus</span>
+</span></span><span class="line"><span class="cl"><span class="n">  memory</span> <span class="o">=</span> <span class="k">each</span><span class="p">.</span><span class="k">value</span><span class="p">.</span><span class="k">memory</span>
+</span></span><span class="line"><span class="cl"><span class="n">  disk</span>   <span class="o">=</span> <span class="k">each</span><span class="p">.</span><span class="k">value</span><span class="p">.</span><span class="k">disk</span>
+</span></span><span class="line"><span class="cl"><span class="n">  cloudinit_file</span> <span class="o">=</span> <span class="s2">&#34;${path.module}/cloud-init/${each.value.role}/user-data.yaml&#34;</span>
+</span></span><span class="line"><span class="cl">}</span></span></code></pre></div></div>
+
+<h2 class="relative group">3.4 OUTPUTS
+    <div id="34-outputs" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 -start-6 not-prose group-hover:opacity-100 select-none">
+        <a class="text-primary-300 dark:text-neutral-700 !no-underline" href="#34-outputs" aria-label="Ancla">#</a>
+    </span>
+    
+</h2>
+<p><code>opentofu/outputs.tf</code> expone las IPs de todos los nodos como un único mapa, que luego consumirá el script de generación del inventario:</p>
+<div class="highlight-wrapper"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-hcl" data-lang="hcl"><span class="line"><span class="cl"><span class="k">output</span> <span class="s2">&#34;node_ips&#34;</span> {
+</span></span><span class="line"><span class="cl"><span class="n">  value</span> <span class="o">=</span> {
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="k">name</span><span class="p">,</span> <span class="k">instance</span> <span class="k">in</span> <span class="k">multipass_instance</span><span class="p">.</span><span class="k">nodes</span> <span class="err">:</span>
+</span></span><span class="line"><span class="cl"><span class="n">    name</span> <span class="o">=</span><span class="err">&gt;</span> <span class="k">instance</span><span class="p">.</span><span class="k">ipv4</span>
+</span></span><span class="line"><span class="cl">  }
+</span></span><span class="line"><span class="cl">}</span></span></code></pre></div></div>
+
+<h2 class="relative group">3.5 CLOUD-INIT
+    <div id="35-cloud-init" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 -start-6 not-prose group-hover:opacity-100 select-none">
+        <a class="text-primary-300 dark:text-neutral-700 !no-underline" href="#35-cloud-init" aria-label="Ancla">#</a>
+    </span>
+    
+</h2>
+<p>Cada rol (<code>master</code>, <code>worker1</code>, <code>worker2</code>, <code>nfs</code>) tiene su propio directorio dentro de <code>opentofu/cloud-init/</code> con un <code>user-data.yaml</code>. El cloud-init se aplica en el momento de crear la VM y configura un usuario <code>ubuntu</code> con permisos de sudo sin contraseña y la clave SSH pública para que Ansible pueda conectarse:</p>
+<div class="highlight-wrapper"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c">#cloud-config</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="nt">users</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">ubuntu</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">sudo</span><span class="p">:</span><span class="w"> </span><span class="l">ALL=(ALL) NOPASSWD:ALL</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">groups</span><span class="p">:</span><span class="w"> </span><span class="l">users, admin</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">shell</span><span class="p">:</span><span class="w"> </span><span class="l">/bin/bash</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">ssh_authorized_keys</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">ssh-ed25519 AAAAC3... tu@email.com</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="nt">chpasswd</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">expire</span><span class="p">:</span><span class="w"> </span><span class="kc">False</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">users</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">ubuntu</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l">ubuntu</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">text</span></span></span></code></pre></div></div>
+<p><strong>Importante</strong>: antes de ejecutar el proyecto hay que sustituir la clave SSH de cada <code>user-data.yaml</code> por la clave pública propia (<code>~/.ssh/id_rsa.pub</code> o similar), si no Ansible no podrá conectarse a las VMs.</p>
+
+<h1 class="relative group">4. GENERACIÓN DEL INVENTARIO
+    <div id="4-generación-del-inventario" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 -start-6 not-prose group-hover:opacity-100 select-none">
+        <a class="text-primary-300 dark:text-neutral-700 !no-underline" href="#4-generaci%c3%b3n-del-inventario" aria-label="Ancla">#</a>
+    </span>
+    
+</h1>
+<p>El fichero de inventario de Ansible (<code>ansible/hosts</code>) no se escribe a mano: se genera automáticamente a partir de los outputs de OpenTofu con el script <code>scripts/inventory.sh</code>.</p>
+<p>El script hace lo siguiente:</p>
+<ol>
+<li>Consulta <code>tofu output -json node_ips</code> para obtener todas las IPs de los nodos</li>
+<li>Filtra las IPs por nombre de nodo (<code>master</code>, <code>worker</code>, <code>nfs</code>) con <code>jq</code></li>
+<li>Escribe el fichero <code>ansible/hosts</code> ya agrupado en los grupos correctos</li>
+</ol>
+<div class="highlight-wrapper"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bash scripts/inventory.sh</span></span></code></pre></div></div>
+<p>El resultado es un inventario con esta forma:</p>
+<div class="highlight-wrapper"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ini" data-lang="ini"><span class="line"><span class="cl"><span class="k">[node_master]</span>
+</span></span><span class="line"><span class="cl"><span class="na">k3s-master ansible_host</span><span class="o">=</span><span class="s">10.x.x.x ansible_user=ubuntu</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">[node_workers]</span>
+</span></span><span class="line"><span class="cl"><span class="na">k3s-worker1 ansible_host</span><span class="o">=</span><span class="s">10.x.x.x ansible_user=ubuntu</span>
+</span></span><span class="line"><span class="cl"><span class="na">k3s-worker2 ansible_host</span><span class="o">=</span><span class="s">10.x.x.x ansible_user=ubuntu</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">[nfs_server]</span>
+</span></span><span class="line"><span class="cl"><span class="na">nfs-server ansible_host</span><span class="o">=</span><span class="s">10.x.x.x ansible_user=ubuntu</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">[k3s_cluster:children]</span>
+</span></span><span class="line"><span class="cl"><span class="na">node_master</span>
+</span></span><span class="line"><span class="cl"><span class="na">node_workers</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">[all:children]</span>
+</span></span><span class="line"><span class="cl"><span class="na">node_master</span>
+</span></span><span class="line"><span class="cl"><span class="na">node_workers</span>
+</span></span><span class="line"><span class="cl"><span class="na">nfs_server</span></span></span></code></pre></div></div>
+<p>Al depender únicamente de los outputs de OpenTofu, si las VMs se destruyen y se vuelven a crear con otras IPs, el inventario se regenera solo, sin tener que tocar nada a mano.</p>
+
+<h1 class="relative group">5. ANSIBLE: CONFIGURACIÓN DEL SOFTWARE
+    <div id="5-ansible-configuración-del-software" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 -start-6 not-prose group-hover:opacity-100 select-none">
+        <a class="text-primary-300 dark:text-neutral-700 !no-underline" href="#5-ansible-configuraci%c3%b3n-del-software" aria-label="Ancla">#</a>
+    </span>
+    
+</h1>
+<p>Una vez las VMs existen y el inventario está generado, Ansible se encarga de instalar y configurar todo el software dentro de ellas.</p>
+
+<h2 class="relative group">5.1 ANSIBLE.CFG
+    <div id="51-ansiblecfg" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 -start-6 not-prose group-hover:opacity-100 select-none">
+        <a class="text-primary-300 dark:text-neutral-700 !no-underline" href="#51-ansiblecfg" aria-label="Ancla">#</a>
+    </span>
+    
+</h2>
+<p>Configuración global de Ansible, en <code>ansible/ansible.cfg</code>:</p>
+<div class="highlight-wrapper"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ini" data-lang="ini"><span class="line"><span class="cl"><span class="k">[defaults]</span>
+</span></span><span class="line"><span class="cl"><span class="na">inventory</span>       <span class="o">=</span> <span class="s">hosts</span>
+</span></span><span class="line"><span class="cl"><span class="na">remote_user</span>     <span class="o">=</span> <span class="s">ubuntu</span>
+</span></span><span class="line"><span class="cl"><span class="na">host_key_checking</span> <span class="o">=</span> <span class="s">False</span>
+</span></span><span class="line"><span class="cl"><span class="na">private_key_file</span> <span class="o">=</span> <span class="s">~/.ssh/id_rsa</span></span></span></code></pre></div></div>
+<p><strong>Importante</strong>: si la clave SSH privada está en otra ruta (por ejemplo una clave ed25519), hay que cambiar <code>private_key_file</code> en consecuencia:</p>
+<div class="highlight-wrapper"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ini" data-lang="ini"><span class="line"><span class="cl"><span class="na">private_key_file</span> <span class="o">=</span> <span class="s">~/.ssh/id_ed25519</span></span></span></code></pre></div></div>
+
+<h2 class="relative group">5.2 PLAYBOOK PRINCIPAL
+    <div id="52-playbook-principal" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 -start-6 not-prose group-hover:opacity-100 select-none">
+        <a class="text-primary-300 dark:text-neutral-700 !no-underline" href="#52-playbook-principal" aria-label="Ancla">#</a>
+    </span>
+    
+</h2>
+<p><code>ansible/site.yaml</code> orquesta la ejecución de todos los roles, cada uno sobre el grupo de hosts que le corresponde:</p>
+<div class="highlight-wrapper"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl">- <span class="nt">hosts</span><span class="p">:</span><span class="w"> </span><span class="l">k3s_cluster   </span><span class="w"> </span><span class="c"># todos los nodos k3s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">roles</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="l">commons]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl">- <span class="nt">hosts</span><span class="p">:</span><span class="w"> </span><span class="l">nfs_server    </span><span class="w"> </span><span class="c"># solo el servidor NFS</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">roles</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="l">nfs_server]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl">- <span class="nt">hosts</span><span class="p">:</span><span class="w"> </span><span class="l">node_master   </span><span class="w"> </span><span class="c"># solo el master</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">roles</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="l">k3s_master]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl">- <span class="nt">hosts</span><span class="p">:</span><span class="w"> </span><span class="l">node_workers  </span><span class="w"> </span><span class="c"># solo los workers</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">roles</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="l">k3s_worker]</span></span></span></code></pre></div></div>
+
+<h2 class="relative group">5.3 ROL COMMONS
+    <div id="53-rol-commons" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 -start-6 not-prose group-hover:opacity-100 select-none">
+        <a class="text-primary-300 dark:text-neutral-700 !no-underline" href="#53-rol-commons" aria-label="Ancla">#</a>
+    </span>
+    
+</h2>
+<p>Se aplica a todos los nodos del clúster k3s, y simplemente actualiza el sistema:</p>
+<div class="highlight-wrapper"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl">- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Actualizar el sistema y los paquetes</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">apt</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">update_cache</span><span class="p">:</span><span class="w"> </span><span class="kc">yes</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">upgrade</span><span class="p">:</span><span class="w"> </span><span class="kc">yes</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">cache_valid_time</span><span class="p">:</span><span class="w"> </span><span class="m">3600</span></span></span></code></pre></div></div>
+
+<h2 class="relative group">5.4 ROL NODES
+    <div id="54-rol-nodes" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 -start-6 not-prose group-hover:opacity-100 select-none">
+        <a class="text-primary-300 dark:text-neutral-700 !no-underline" href="#54-rol-nodes" aria-label="Ancla">#</a>
+    </span>
+    
+</h2>
+<p>Instala <code>nfs-common</code> en los nodos del clúster, necesario para que luego puedan montar volúmenes NFS:</p>
+<div class="highlight-wrapper"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl">- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Instalar nfs</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">apt</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="l">nfs-common]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l">present</span></span></span></code></pre></div></div>
+
+<h2 class="relative group">5.5 ROL NFS_SERVER
+    <div id="55-rol-nfs_server" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 -start-6 not-prose group-hover:opacity-100 select-none">
+        <a class="text-primary-300 dark:text-neutral-700 !no-underline" href="#55-rol-nfs_server" aria-label="Ancla">#</a>
+    </span>
+    
+</h2>
+<p>Configura la VM <code>nfs-server</code> como servidor NFS: instala el paquete, crea el directorio compartido y exporta ese directorio a la subred del clúster.</p>
+<div class="highlight-wrapper"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl">- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Instalar nfs-kernel-server</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">apt</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">nfs-kernel-server</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l">present</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl">- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Crear directorio compartido</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">file</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l">/srv/nfs/data</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l">directory</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;0777&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl">- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Configurar exports</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">lineinfile</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l">/etc/exports</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">line</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;/srv/nfs/data 10.147.215.0/24(rw,sync,no_subtree_check,no_root_squash)&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">create</span><span class="p">:</span><span class="w"> </span><span class="kc">yes</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl">- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Aplicar exports y arrancar NFS</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">shell</span><span class="p">:</span><span class="w"> </span><span class="l">exportfs -ra</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">notify</span><span class="p">:</span><span class="w"> </span><span class="l">restart nfs</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl">- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Asegurar que nfs-server está activo</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">systemd</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">nfs-server</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l">started</span></span></span></code></pre></div></div>
+<p>El handler <code>restart nfs</code> se encarga de reiniciar el servicio cada vez que cambia la configuración de <code>/etc/exports</code>:</p>
+<div class="highlight-wrapper"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl">- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">restart nfs</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">service</span><span class="p">:</span><span class="w"> </span><span class="l">name=nfs-server state=restarted</span></span></span></code></pre></div></div>
+
+<h2 class="relative group">5.6 ROL K3S_MASTER
+    <div id="56-rol-k3s_master" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 -start-6 not-prose group-hover:opacity-100 select-none">
+        <a class="text-primary-300 dark:text-neutral-700 !no-underline" href="#56-rol-k3s_master" aria-label="Ancla">#</a>
+    </span>
+    
+</h2>
+<p>Instala k3s en modo servidor en el nodo master usando el script oficial de instalación, espera a que genere el <code>node-token</code>, lo lee y lo guarda como fact global para que los workers puedan usarlo más adelante. Por último descarga el <code>kubeconfig</code> a la máquina local, sustituyendo <code>127.0.0.1</code> por la IP real del master:</p>
+<div class="highlight-wrapper"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl">- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Instalar k3s como servidor</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">shell</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">    curl -sfL https://get.k3s.io | sh -s - server \
+</span></span></span><span class="line"><span class="cl"><span class="sd">      --write-kubeconfig-mode 644</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">args</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">creates</span><span class="p">:</span><span class="w"> </span><span class="l">/usr/local/bin/k3s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl">- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Esperar a que k3s esté listo</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">wait_for</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l">/var/lib/rancher/k3s/server/node-token</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="m">60</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl">- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Leer node-token</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">slurp</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">src</span><span class="p">:</span><span class="w"> </span><span class="l">/var/lib/rancher/k3s/server/node-token</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l">k3s_token</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl">- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Guardar token como fact global</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">set_fact</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">k3s_token</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;{{ k3s_token.content | b64decode | trim }}&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">k3s_master_ip</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;{{ ansible_host }}&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">delegate_to</span><span class="p">:</span><span class="w"> </span><span class="l">localhost</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">delegate_facts</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl">- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Leer kubeconfig</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">slurp</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">src</span><span class="p">:</span><span class="w"> </span><span class="l">/etc/rancher/k3s/k3s.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l">kubeconfig_raw</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl">- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Guardar kubeconfig en local</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">copy</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">content</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;{{ kubeconfig_raw.content | b64decode | replace(&#39;127.0.0.1&#39;, ansible_host) }}&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">dest</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;~/.kube/kubeconfig-k3s&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;0600&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">delegate_to</span><span class="p">:</span><span class="w"> </span><span class="l">localhost</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">become</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span></span></span></code></pre></div></div>
+<p>Gracias a <code>creates: /usr/local/bin/k3s</code>, esta tarea es idempotente: si k3s ya está instalado, Ansible no lo vuelve a ejecutar.</p>
+
+<h2 class="relative group">5.7 ROL K3S_WORKER
+    <div id="57-rol-k3s_worker" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 -start-6 not-prose group-hover:opacity-100 select-none">
+        <a class="text-primary-300 dark:text-neutral-700 !no-underline" href="#57-rol-k3s_worker" aria-label="Ancla">#</a>
+    </span>
+    
+</h2>
+<p>Cada worker lee el token y la IP del master que guardó el rol anterior (a través de <code>hostvars['localhost']</code>) e instala k3s en modo agente apuntando a ese master:</p>
+<div class="highlight-wrapper"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl">- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Instalar k3s como agente</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">shell</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">    curl -sfL https://get.k3s.io | K3S_URL=https://{{ hostvars[&#39;localhost&#39;][&#39;k3s_master_ip&#39;] }}:6443 \
+</span></span></span><span class="line"><span class="cl"><span class="sd">      K3S_TOKEN={{ hostvars[&#39;localhost&#39;][&#39;k3s_token&#39;] }} sh -</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">args</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">creates</span><span class="p">:</span><span class="w"> </span><span class="l">/usr/local/bin/k3s</span></span></span></code></pre></div></div>
+<p>De esta forma no hay que copiar el token a mano en ningún sitio: viaja de un rol a otro a través de los facts de Ansible.</p>
+
+<h1 class="relative group">6. HELM: NFS PROVISIONER
+    <div id="6-helm-nfs-provisioner" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 -start-6 not-prose group-hover:opacity-100 select-none">
+        <a class="text-primary-300 dark:text-neutral-700 !no-underline" href="#6-helm-nfs-provisioner" aria-label="Ancla">#</a>
+    </span>
+    
+</h1>
+<p>Con el clúster k3s ya funcionando y el servidor NFS disponible, el último paso es desplegar un <strong>NFS provisioner</strong> dentro del propio clúster. Esto permite crear <code>PersistentVolumes</code> dinámicos respaldados por el servidor NFS, de modo que cualquier pod puede pedir almacenamiento sin importar en qué nodo físico esté corriendo.</p>
+<p><code>helm/nfs-provisioner/values.yaml</code>:</p>
+<div class="highlight-wrapper"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">nfs</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l">/srv/nfs/data</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="nt">storageClass</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">nfs-csi</span></span></span></code></pre></div></div>
+<p>La IP del servidor NFS no está escrita a mano aquí: el <code>Makefile</code> la lee dinámicamente del fichero <code>ansible/hosts</code> generado antes y se la pasa a Helm con <code>--set nfs.server=</code>.</p>
+<p>Una vez desplegado, queda disponible una <code>StorageClass</code> llamada <code>nfs-csi</code> que puede usar cualquier <code>PersistentVolumeClaim</code> del clúster.</p>
+
+<h1 class="relative group">7. MAKEFILE: AUTOMATIZACIÓN COMPLETA
+    <div id="7-makefile-automatización-completa" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 -start-6 not-prose group-hover:opacity-100 select-none">
+        <a class="text-primary-300 dark:text-neutral-700 !no-underline" href="#7-makefile-automatizaci%c3%b3n-completa" aria-label="Ancla">#</a>
+    </span>
+    
+</h1>
+<p>Todo el flujo anterior se orquesta desde un único <code>Makefile</code>, de forma idempotente:</p>
+<div class="highlight-wrapper"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="nf">all</span><span class="o">:</span> <span class="n">up</span> <span class="n">configure</span> <span class="n">nfs</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">up</span><span class="o">:</span> <span class="n">tofu</span>-<span class="n">init</span> <span class="n">tofu</span>-<span class="n">apply</span> <span class="n">inventory</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">tofu-init</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">	@if <span class="o">[</span> ! -d <span class="s2">&#34;</span><span class="k">$(</span>TOFU_DIR<span class="k">)</span><span class="s2">/.terraform&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">		<span class="nb">cd</span> <span class="k">$(</span>TOFU_DIR<span class="k">)</span> <span class="o">&amp;&amp;</span> tofu init<span class="p">;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">	<span class="k">fi</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">tofu-apply</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">	@cd <span class="k">$(</span>TOFU_DIR<span class="k">)</span> <span class="o">&amp;&amp;</span> tofu apply -auto-approve
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">inventory</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">	@bash scripts/inventory.sh
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">configure</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">	@cd <span class="k">$(</span>ANSIBLE_DIR<span class="k">)</span> <span class="o">&amp;&amp;</span> ansible-playbook site.yaml
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">nfs</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">	@KUBECONFIG<span class="o">=</span><span class="k">$(</span>KUBECONFIG<span class="k">)</span> helm repo add nfs-subdir-external-provisioner <span class="se">\
+</span></span></span><span class="line"><span class="cl">		https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/ 2&gt;/dev/null <span class="o">||</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">	@NFS_IP<span class="o">=</span><span class="nv">$$</span><span class="o">(</span>grep <span class="s1">&#39;nfs-server&#39;</span> <span class="k">$(</span>ANSIBLE_DIR<span class="k">)</span>/hosts <span class="p">|</span> awk <span class="s1">&#39;{print $$2}&#39;</span> <span class="p">|</span> cut -d<span class="s1">&#39;=&#39;</span> -f2 <span class="p">|</span> cut -d<span class="s1">&#39; &#39;</span> -f1<span class="o">)</span><span class="p">;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">	<span class="nv">KUBECONFIG</span><span class="o">=</span><span class="k">$(</span>KUBECONFIG<span class="k">)</span> helm upgrade --install nfs-subdir-external-provisioner <span class="se">\
+</span></span></span><span class="line"><span class="cl">	nfs-subdir-external-provisioner/nfs-subdir-external-provisioner <span class="se">\
+</span></span></span><span class="line"><span class="cl">	--values <span class="k">$(</span>HELM_DIR<span class="k">)</span>/nfs-provisioner/values.yaml <span class="se">\
+</span></span></span><span class="line"><span class="cl">	--set nfs.server<span class="o">=</span><span class="nv">$$</span>NFS_IP <span class="se">\
+</span></span></span><span class="line"><span class="cl">	--namespace nfs-provisioner <span class="se">\
+</span></span></span><span class="line"><span class="cl">	--create-namespace
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">destroy</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">	@cd <span class="k">$(</span>TOFU_DIR<span class="k">)</span> <span class="o">&amp;&amp;</span> tofu destroy -auto-approve
+</span></span><span class="line"><span class="cl">	@rm -f <span class="k">$(</span>ANSIBLE_DIR<span class="k">)</span>/hosts
+</span></span><span class="line"><span class="cl">	@rm -f <span class="k">$(</span>KUBECONFIG<span class="k">)</span>
+</span></span></code></pre></div></div>
+<p>Los comandos disponibles son:</p>
+<div class="highlight-wrapper"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">make all        <span class="c1"># ejecuta up + configure + nfs</span>
+</span></span><span class="line"><span class="cl">make up         <span class="c1"># crea las VMs y genera el inventario</span>
+</span></span><span class="line"><span class="cl">make configure  <span class="c1"># instala k3s y nfs-server con Ansible</span>
+</span></span><span class="line"><span class="cl">make nfs        <span class="c1"># despliega el NFS provisioner con Helm</span>
+</span></span><span class="line"><span class="cl">make destroy    <span class="c1"># destruye todas las VMs y limpia los ficheros generados</span></span></span></code></pre></div></div>
+<p>La idempotencia se consigue en varios puntos: <code>tofu init</code> solo se ejecuta si <code>.terraform/</code> no existe, <code>tofu apply</code> no hace nada si las VMs ya están creadas y no hay cambios, los playbooks de Ansible comprueban el estado antes de actuar, y <code>helm upgrade --install</code> actualiza si hay cambios y no hace nada si está todo igual.</p>
+
+<h1 class="relative group">8. PUESTA EN MARCHA
+    <div id="8-puesta-en-marcha" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 -start-6 not-prose group-hover:opacity-100 select-none">
+        <a class="text-primary-300 dark:text-neutral-700 !no-underline" href="#8-puesta-en-marcha" aria-label="Ancla">#</a>
+    </span>
+    
+</h1>
+<p>Con todo lo anterior montado, levantar el clúster completo desde cero se reduce a estos pasos:</p>
+<div class="highlight-wrapper"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># 1. Clonar el repo</span>
+</span></span><span class="line"><span class="cl">git clone https://github.com/ryberxy/cluster-k3s
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> cluster-k3s
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 2. Añadir la clave SSH pública en cada cloud-init</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># editar opentofu/cloud-init/*/user-data.yaml</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 3. Lanzar todo</span>
+</span></span><span class="line"><span class="cl">make all
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 4. Exportar el kubeconfig</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KUBECONFIG</span><span class="o">=</span>~/.kube/kubeconfig-k3s
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 5. Verificar el clúster</span>
+</span></span><span class="line"><span class="cl">kubectl get nodes</span></span></code></pre></div></div>
+
+<h1 class="relative group">9. MIGRACIÓN A UN SERVIDOR DEDICADO
+    <div id="9-migración-a-un-servidor-dedicado" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 -start-6 not-prose group-hover:opacity-100 select-none">
+        <a class="text-primary-300 dark:text-neutral-700 !no-underline" href="#9-migraci%c3%b3n-a-un-servidor-dedicado" aria-label="Ancla">#</a>
+    </span>
+    
+</h1>
+<p>Una de las ventajas de separar la infraestructura (OpenTofu) de la configuración (Ansible) es que el proyecto es fácilmente portable a un proveedor real, por ejemplo Hetzner, sin tener que rehacer nada de Ansible ni del Makefile:</p>
+<ol>
+<li>Cambiar el provider en <code>opentofu/provider.tf</code> por el de Hetzner</li>
+<li>Adaptar <code>opentofu/main.tf</code> con los recursos de Hetzner Cloud en vez de instancias de Multipass</li>
+<li>Los playbooks de Ansible y el <code>Makefile</code> se reutilizan sin cambios, ya que solo dependen del inventario generado</li>
+<li>Para almacenamiento distribuido nativo en un entorno real, se podría sustituir el NFS provisioner por <strong>Longhorn</strong></li>
+</ol>
+
+            </div>
+            
+            
+
+            
+
+            
+
+          </div>
+        </section>
+
+        <footer class="pt-8 print:hidden">
+          
+  
+
+
+          
+
+        </footer>
+        </div>
+      </article>
+    </div>
+
+    
+      <aside class="rbx-toc print:hidden">
+        <details
+  open
+  id="TOCView"
+  class="toc-right mt-0 overflow-y-auto overscroll-contain bf-scrollbar rounded-lg -ms-5 ps-5 pe-2 hidden lg:block">
+  <summary
+    class="block py-1 text-lg font-semibold cursor-pointer bg-neutral-100 text-neutral-800 -ms-5 ps-5 dark:bg-neutral-700 dark:text-neutral-100 lg:hidden">
+    Tabla de contenido
+  </summary>
+  <div
+    class="min-w-[220px] py-2 border-dotted border-s-1 -ms-5 ps-5 dark:border-neutral-600">
+    <nav id="TableOfContents" aria-label="Tabla de contenido">
+  <ul>
+    <li><a href="#1-introducción-y-arquitectura">1. INTRODUCCIÓN Y ARQUITECTURA</a></li>
+    <li><a href="#2-requisitos-previos">2. REQUISITOS PREVIOS</a></li>
+    <li><a href="#3-opentofu-creación-de-la-infraestructura">3. OPENTOFU: CREACIÓN DE LA INFRAESTRUCTURA</a></li>
+    <li><a href="#4-generación-del-inventario">4. GENERACIÓN DEL INVENTARIO</a></li>
+    <li><a href="#5-ansible-configuración-del-software">5. ANSIBLE: CONFIGURACIÓN DEL SOFTWARE</a></li>
+    <li><a href="#6-helm-nfs-provisioner">6. HELM: NFS PROVISIONER</a></li>
+    <li><a href="#7-makefile-automatización-completa">7. MAKEFILE: AUTOMATIZACIÓN COMPLETA</a></li>
+    <li><a href="#8-puesta-en-marcha">8. PUESTA EN MARCHA</a></li>
+    <li><a href="#9-migración-a-un-servidor-dedicado">9. MIGRACIÓN A UN SERVIDOR DEDICADO</a></li>
+  </ul>
+</nav>
+  </div>
+</details>
+<details class="toc-inside mt-0 overflow-hidden rounded-lg -ms-5 ps-5 lg:hidden">
+  <summary
+    class="py-1 text-lg font-semibold cursor-pointer bg-neutral-100 text-neutral-800 -ms-5 ps-5 dark:bg-neutral-700 dark:text-neutral-100 lg:hidden">
+    Tabla de contenido
+  </summary>
+  <div
+    class="py-2 border-dotted border-neutral-300 border-s-1 -ms-5 ps-5 dark:border-neutral-600">
+    <nav id="TableOfContentsMobile" aria-label="Tabla de contenido">
+  <ul>
+    <li><a href="#1-introducción-y-arquitectura">1. INTRODUCCIÓN Y ARQUITECTURA</a></li>
+    <li><a href="#2-requisitos-previos">2. REQUISITOS PREVIOS</a></li>
+    <li><a href="#3-opentofu-creación-de-la-infraestructura">3. OPENTOFU: CREACIÓN DE LA INFRAESTRUCTURA</a></li>
+    <li><a href="#4-generación-del-inventario">4. GENERACIÓN DEL INVENTARIO</a></li>
+    <li><a href="#5-ansible-configuración-del-software">5. ANSIBLE: CONFIGURACIÓN DEL SOFTWARE</a></li>
+    <li><a href="#6-helm-nfs-provisioner">6. HELM: NFS PROVISIONER</a></li>
+    <li><a href="#7-makefile-automatización-completa">7. MAKEFILE: AUTOMATIZACIÓN COMPLETA</a></li>
+    <li><a href="#8-puesta-en-marcha">8. PUESTA EN MARCHA</a></li>
+    <li><a href="#9-migración-a-un-servidor-dedicado">9. MIGRACIÓN A UN SERVIDOR DEDICADO</a></li>
+  </ul>
+</nav>
+  </div>
+</details>
+
+
+
+      </aside>
+    
+  </div>
+
+        
+
+
+  
+
+
+
+
+
+
+<div
+  id="scroll-to-top"
+  class="fixed bottom-6 end-6 z-50 transform translate-y-4 opacity-0 duration-200">
+  <a
+    href="#the-top"
+    class="pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full bg-neutral/50 text-xl text-neutral-700 hover:text-primary-600 dark:bg-neutral-800/50 dark:text-neutral dark:hover:text-primary-400"
+    aria-label="Ir arriba"
+    title="Ir arriba">
+    &uarr;
+  </a>
+</div>
+
+      </main><footer id="site-footer" class="py-10 print:hidden">
+  
+  
+    
+  
+  <div class="flex items-center justify-between">
+    
+    
+      <p class="text-sm text-neutral-500 dark:text-neutral-400">
+          © 2026 Roberto Martín Rivera
+      </p>
+    
+
+    
+    
+      <p class="text-xs text-neutral-500 dark:text-neutral-400">
+        
+        
+        Desarrollada con <a class="hover:underline hover:decoration-primary-400 hover:text-primary-500"
+          href="https://gohugo.io/" target="_blank" rel="noopener noreferrer">Hugo</a> &amp; <a class="hover:underline hover:decoration-primary-400 hover:text-primary-500"
+          href="https://blowfish.page/" target="_blank" rel="noopener noreferrer">Blowfish</a>
+      </p>
+    
+  </div>
+  
+  
+</footer>
+<div
+  id="search-wrapper"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Buscar"
+  class="invisible fixed inset-0 flex h-screen w-screen cursor-default flex-col bg-neutral-500/50 p-4 backdrop-blur-sm dark:bg-neutral-900/50 sm:p-6 md:p-[10vh] lg:p-[12vh] z-500"
+  data-url="/">
+  <div
+    id="search-modal"
+    class="flex flex-col w-full max-w-3xl min-h-0 mx-auto border rounded-md shadow-lg top-20 border-neutral-200 bg-neutral dark:border-neutral-700 dark:bg-neutral-800">
+    <header class="relative z-10 flex items-center justify-between flex-none px-2">
+      <form class="flex items-center flex-auto min-w-0">
+        <div class="flex items-center justify-center w-8 h-8 text-neutral-400">
+          <span class="relative block icon"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="search" class="svg-inline--fa fa-search fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+</span>
+        </div>
+        <input
+          type="search"
+          id="search-query"
+          aria-label="Buscar"
+          class="flex flex-auto h-12 mx-1 bg-transparent appearance-none focus:outline-dotted focus:outline-2 focus:outline-transparent"
+          placeholder="Buscar"
+          tabindex="0">
+      </form>
+      <button
+        id="close-search-button"
+        class="flex items-center justify-center w-8 h-8 text-neutral-700 hover:text-primary-600 dark:text-neutral dark:hover:text-primary-400"
+        title="Cerrar (Esc)">
+        <span class="relative block icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M310.6 361.4c12.5 12.5 12.5 32.75 0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3L54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75 0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-105.4 105.4L310.6 361.4z"/></svg>
+</span>
+      </button>
+    </header>
+    <section class="flex-auto px-2 overflow-auto">
+      <ul id="search-results">
+        
+      </ul>
+    </section>
+  </div>
+</div>
+
+    </div>
+    
+    
+  </body>
+  
+</html>
