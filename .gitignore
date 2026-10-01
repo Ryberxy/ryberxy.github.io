@@ -1,0 +1,22 @@
+# --- Hugo: artefactos generados ---
+# Sitio compilado lo genera GitHub Actions, no se versiona
+/public/
+
+# Caché de recursos de Hugo (imágenes redimensionadas, etc.) — se regenera sola
+/resources/_gen/
+
+# Fichero de bloqueo que crea `hugo server` mientras está corriendo
+.hugo_build.lock
+
+# --- Python (scripts en tools/) ---
+__pycache__/
+*.pyc
+*.pyo
+
+# --- Editores ---
+.vscode/
+*.swp
+*.swo
+
+# --- Variables de entorno / secretos (por si acaso en el futuro) ---
+.env
