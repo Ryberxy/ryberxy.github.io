@@ -16,10 +16,10 @@ title = "Blog Ryberxy"
   name = "Roberto Martín Rivera"
   image = "img/author.jpg"
   imageQuality = 96
-  headline = "Estudiante de informática"
+  headline = "¡Bienvenido a mi página personal!"
   bio = "Aquí documento mis prácticas y proyectos: redes, sistemas, bases de datos y más."
   links = [
     { github = "https://github.com/Ryberxy" },
-    # { linkedin = "https://linkedin.com/in/TU-USUARIO" },
+    { linkedin = "https://www.linkedin.com/in/roberto-martin-rivera-81b945337/" },
     # { email = "mailto:tu-correo@ejemplo.com" },
   ]
