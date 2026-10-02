@@ -7,43 +7,43 @@ tags: ["OpenTofu", "Ansible", "Kubernetes", "k3s", "Helm", "NFS", "Makefile"]
 
 # 1. INTRODUCCIÓN Y ARQUITECTURA
 
-El objetivo de esta práctica es levantar un clúster de Kubernetes (k3s) completo de forma totalmente automatizada, combinando tres herramientas que cubren cada una una capa distinta del despliegue:
+En esta práctica levanto un clúster de Kubernetes (k3s) sin hacer nada a mano. Cada capa del despliegue la lleva una herramienta distinta:
 
-- **OpenTofu** — crea y destruye la infraestructura (las VMs) de forma declarativa.
-- **Ansible** — instala y configura el software dentro de esas VMs (k3s, NFS, etc.).
-- **Helm** — despliega aplicaciones dentro del propio clúster de Kubernetes ya funcionando.
+- OpenTofu crea y destruye las VMs de forma declarativa.
+- Ansible instala y configura el software dentro de esas VMs (k3s, NFS...).
+- Helm despliega aplicaciones dentro del clúster una vez está en marcha.
 
-El clúster está formado por 4 nodos, gestionados como VMs de **Multipass**:
+El clúster tiene 4 nodos, todos ellos VMs de Multipass:
 
-- `k3s-master` — nodo master de k3s
-- `k3s-worker1` y `k3s-worker2` — nodos worker de k3s
-- `nfs-server` — servidor NFS que proporciona almacenamiento compartido al clúster
+- k3s-master: el nodo master de k3s
+- k3s-worker1 y k3s-worker2: los workers
+- nfs-server: el servidor NFS que da almacenamiento compartido al clúster
 
-Todo el flujo (crear VMs → generar inventario → instalar k3s → desplegar almacenamiento) se orquesta con un único `Makefile`, de modo que levantar el clúster completo desde cero es tan sencillo como ejecutar `make all`.
+Un único Makefile encadena todo el flujo (crear VMs → generar inventario → instalar k3s → desplegar almacenamiento), así que para levantar el clúster desde cero basta con make all.
 
 # 2. REQUISITOS PREVIOS
 
-Antes de ejecutar el proyecto es necesario tener instaladas las siguientes herramientas en la máquina anfitriona:
+En la máquina anfitriona hacen falta estas herramientas:
 
 - [Multipass](https://multipass.run/)
 - [OpenTofu](https://opentofu.org/)
 - [Ansible](https://www.ansible.com/)
 - [Helm](https://helm.sh/)
-- `jq`
+- jq
 
 ``` bash
 sudo apt install jq
 ```
 
-También hace falta tener un par de claves SSH generadas, ya que la clave pública se inyectará en cada VM mediante `cloud-init` para que Ansible pueda conectarse sin contraseña.
+También necesitas un par de claves SSH. La pública se mete en cada VM con cloud-init, y así Ansible entra sin contraseña.
 
 # 3. OPENTOFU: CREACIÓN DE LA INFRAESTRUCTURA
 
-OpenTofu es la alternativa open source a Terraform, y aquí se usa para crear y destruir las VMs de Multipass de forma declarativa.
+OpenTofu es el fork open source de Terraform. Aquí lo uso para crear y destruir las VMs de Multipass.
 
 ## 3.1 PROVIDER
 
-En `opentofu/provider.tf` se define el provider de Multipass que va a usar OpenTofu:
+opentofu/provider.tf declara el provider de Multipass:
 
 ``` hcl
 terraform {
@@ -58,7 +58,7 @@ terraform {
 
 ## 3.2 VARIABLES DE LOS NODOS
 
-En `opentofu/variables.tf` se define el clúster completo como un mapa de objetos. Cada nodo tiene su número de CPUs, memoria, disco y rol:
+En opentofu/variables.tf el clúster entero es un mapa de objetos, con las CPUs, la memoria, el disco y el rol de cada nodo:
 
 ``` hcl
 variable "nodes" {
@@ -78,11 +78,11 @@ variable "nodes" {
 }
 ```
 
-Para añadir un nodo nuevo al clúster basta con añadir una entrada más a este mapa, no hay que tocar nada más.
+Si quiero otro nodo, añado una entrada al mapa y el resto del código se queda como está.
 
 ## 3.3 CREACIÓN DE LAS INSTANCIAS
 
-En `opentofu/main.tf` se itera sobre `var.nodes` para crear una instancia de Multipass por cada nodo definido. Cada una recibe su propio `cloud-init` según el rol que le corresponda:
+opentofu/main.tf recorre var.nodes con for_each y crea una instancia de Multipass por nodo. Cada instancia carga el cloud-init de su rol:
 
 ``` hcl
 resource "multipass_instance" "nodes" {
@@ -99,7 +99,7 @@ resource "multipass_instance" "nodes" {
 
 ## 3.4 OUTPUTS
 
-`opentofu/outputs.tf` expone las IPs de todos los nodos como un único mapa, que luego consumirá el script de generación del inventario:
+opentofu/outputs.tf saca las IPs de todos los nodos en un único mapa. Ese mapa es lo que luego lee el script que genera el inventario:
 
 ``` hcl
 output "node_ips" {
@@ -112,7 +112,7 @@ output "node_ips" {
 
 ## 3.5 CLOUD-INIT
 
-Cada rol (`master`, `worker1`, `worker2`, `nfs`) tiene su propio directorio dentro de `opentofu/cloud-init/` con un `user-data.yaml`. El cloud-init se aplica en el momento de crear la VM y configura un usuario `ubuntu` con permisos de sudo sin contraseña y la clave SSH pública para que Ansible pueda conectarse:
+Cada rol (master, worker1, worker2, nfs) tiene su directorio en opentofu/cloud-init/ con un user-data.yaml. Se aplica al crear la VM: crea el usuario ubuntu con sudo sin contraseña y le añade la clave SSH pública para que Ansible pueda conectarse:
 
 ``` yaml
 #cloud-config
@@ -131,23 +131,83 @@ chpasswd:
       type: text
 ```
 
-**Importante**: antes de ejecutar el proyecto hay que sustituir la clave SSH de cada `user-data.yaml` por la clave pública propia (`~/.ssh/id_rsa.pub` o similar), si no Ansible no podrá conectarse a las VMs.
+Antes de lanzar nada, cambia la clave SSH de cada user-data.yaml por tu clave pública (~/.ssh/id_rsa.pub o la que uses). Si te lo saltas, Ansible no podrá conectarse a las VMs.
 
 # 4. GENERACIÓN DEL INVENTARIO
 
-El fichero de inventario de Ansible (`ansible/hosts`) no se escribe a mano: se genera automáticamente a partir de los outputs de OpenTofu con el script `scripts/inventory.sh`.
+El inventario de Ansible (ansible/hosts) no lo escribo yo. Lo genera scripts/inventory.sh a partir de los outputs de OpenTofu:
 
-El script hace lo siguiente:
+``` bash
+#!/bin/bash
+# scripts/inventory.sh
 
-1. Consulta `tofu output -json node_ips` para obtener todas las IPs de los nodos
-2. Filtra las IPs por nombre de nodo (`master`, `worker`, `nfs`) con `jq`
-3. Escribe el fichero `ansible/hosts` ya agrupado en los grupos correctos
+###### VARIABLES ######
+# Ruta absoluta al directorio raíz del proyecto (un nivel arriba del script)
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+TOFU_DIR="${PROJECT_ROOT}/opentofu"
+HOSTS_FILE="${PROJECT_ROOT}/ansible/hosts"
+
+NODE_IPS=$(cd "$TOFU_DIR" && tofu output -json node_ips | jq '.value // .')
+
+
+###### LÓGICA ######
+
+echo "[node_master]" > "$HOSTS_FILE"
+echo "$NODE_IPS" | jq -r '
+  to_entries[]
+  | select(.key | test("master"))
+  | "\(.key) ansible_host=\(.value) ansible_user=ubuntu"
+' >> "$HOSTS_FILE"
+
+echo "" >> "$HOSTS_FILE"
+echo "[node_workers]" >> "$HOSTS_FILE"
+echo "$NODE_IPS" | jq -r '
+  to_entries[]
+  | select(.key | test("worker"))
+  | "\(.key) ansible_host=\(.value) ansible_user=ubuntu"
+' >> "$HOSTS_FILE"
+
+echo "[nfs_server]" >> "$HOSTS_FILE"
+echo "$NODE_IPS" | jq -r '
+  to_entries[]
+  | select(.key | test("nfs"))
+  | "\(.key) ansible_host=\(.value) ansible_user=ubuntu"
+' >> "$HOSTS_FILE"
+
+cat >> "$HOSTS_FILE" << 'EOF'
+
+[k3s_cluster:children]
+node_master
+node_workers
+
+[all:children]
+node_master
+node_workers
+nfs_server
+EOF
+
+echo "Inventory generado:"
+cat "$HOSTS_FILE"
+```
+
+Lo primero que hace es calcular la raíz del proyecto a partir de dónde está el propio script. Así da igual si lo lanzo desde la raíz, desde scripts/ o desde el Makefile: las rutas a opentofu/ y ansible/hosts siempre salen bien.
+
+Con esa ruta pide las IPs a OpenTofu con tofu output -json node_ips. El jq '.value // .' es por si la salida llega envuelta en un objeto { "value": ... }, como pasa con tofu output -json sin nombre de output. En ese caso se queda con value y, si no, deja el JSON tal cual.
+
+Después escribe el fichero grupo a grupo. Pone la cabecera ([node_master], [node_workers], [nfs_server]) y filtra el mapa de IPs con jq. to_entries[] convierte el mapa en pares clave/valor, select(.key | test("worker")) se queda con los nodos cuyo nombre contiene esa palabra y la última línea monta cada entrada con el formato que espera Ansible. El primer echo usa > y vacía el fichero, los demás añaden con >>, así que cada ejecución empieza de cero y no se acumulan nodos viejos.
+
+Como el filtro va por nombre, si añado un k3s-worker3 al mapa de OpenTofu, el script lo mete en [node_workers] sin cambiar nada.
+
+Los grupos de grupos (k3s_cluster y all) no dependen de ninguna IP, así que van fijos en un heredoc al final. Por último, el script imprime el inventario para que se vea qué ha generado.
+
+Se lanza así (el Makefile lo hace por mí en make up):
 
 ``` bash
 bash scripts/inventory.sh
 ```
 
-El resultado es un inventario con esta forma:
+El inventario queda así:
 
 ``` ini
 [node_master]
@@ -170,15 +230,15 @@ node_workers
 nfs_server
 ```
 
-Al depender únicamente de los outputs de OpenTofu, si las VMs se destruyen y se vuelven a crear con otras IPs, el inventario se regenera solo, sin tener que tocar nada a mano.
+Como solo depende de los outputs de OpenTofu, si destruyo las VMs y las vuelvo a crear con otras IPs, el inventario se regenera solo.
 
 # 5. ANSIBLE: CONFIGURACIÓN DEL SOFTWARE
 
-Una vez las VMs existen y el inventario está generado, Ansible se encarga de instalar y configurar todo el software dentro de ellas.
+Con las VMs creadas y el inventario listo, le toca a Ansible instalar y configurar el software dentro de ellas.
 
 ## 5.1 ANSIBLE.CFG
 
-Configuración global de Ansible, en `ansible/ansible.cfg`:
+La configuración global está en ansible/ansible.cfg:
 
 ``` ini
 [defaults]
@@ -188,7 +248,7 @@ host_key_checking = False
 private_key_file = ~/.ssh/id_rsa
 ```
 
-**Importante**: si la clave SSH privada está en otra ruta (por ejemplo una clave ed25519), hay que cambiar `private_key_file` en consecuencia:
+Si tu clave privada está en otra ruta (una ed25519, por ejemplo), cambia private_key_file:
 
 ``` ini
 private_key_file = ~/.ssh/id_ed25519
@@ -196,7 +256,7 @@ private_key_file = ~/.ssh/id_ed25519
 
 ## 5.2 PLAYBOOK PRINCIPAL
 
-`ansible/site.yaml` orquesta la ejecución de todos los roles, cada uno sobre el grupo de hosts que le corresponde:
+ansible/site.yaml lanza cada rol sobre su grupo de hosts:
 
 ``` yaml
 - hosts: k3s_cluster    # todos los nodos k3s
@@ -214,7 +274,7 @@ private_key_file = ~/.ssh/id_ed25519
 
 ## 5.3 ROL COMMONS
 
-Se aplica a todos los nodos del clúster k3s, y simplemente actualiza el sistema:
+Va a todos los nodos del clúster k3s y lo único que hace es actualizar el sistema:
 
 ``` yaml
 - name: Actualizar el sistema y los paquetes
@@ -226,7 +286,7 @@ Se aplica a todos los nodos del clúster k3s, y simplemente actualiza el sistema
 
 ## 5.4 ROL NODES
 
-Instala `nfs-common` en los nodos del clúster, necesario para que luego puedan montar volúmenes NFS:
+Instala nfs-common en los nodos del clúster. Sin ese paquete no podrían montar volúmenes NFS:
 
 ``` yaml
 - name: Instalar nfs
@@ -237,7 +297,7 @@ Instala `nfs-common` en los nodos del clúster, necesario para que luego puedan 
 
 ## 5.5 ROL NFS_SERVER
 
-Configura la VM `nfs-server` como servidor NFS: instala el paquete, crea el directorio compartido y exporta ese directorio a la subred del clúster.
+Convierte la VM nfs-server en el servidor NFS: instala el paquete, crea el directorio compartido y lo exporta a la subred del clúster.
 
 ``` yaml
 - name: Instalar nfs-kernel-server
@@ -268,7 +328,7 @@ Configura la VM `nfs-server` como servidor NFS: instala el paquete, crea el dire
     state: started
 ```
 
-El handler `restart nfs` se encarga de reiniciar el servicio cada vez que cambia la configuración de `/etc/exports`:
+El handler restart nfs reinicia el servicio cada vez que cambia /etc/exports:
 
 ``` yaml
 - name: restart nfs
@@ -277,7 +337,7 @@ El handler `restart nfs` se encarga de reiniciar el servicio cada vez que cambia
 
 ## 5.6 ROL K3S_MASTER
 
-Instala k3s en modo servidor en el nodo master usando el script oficial de instalación, espera a que genere el `node-token`, lo lee y lo guarda como fact global para que los workers puedan usarlo más adelante. Por último descarga el `kubeconfig` a la máquina local, sustituyendo `127.0.0.1` por la IP real del master:
+Instala k3s en modo servidor en el master con el script oficial. Después espera a que aparezca el node-token, lo lee y lo guarda como fact global, que es de donde lo sacarán los workers. Al final se trae el kubeconfig a la máquina local y cambia 127.0.0.1 por la IP real del master:
 
 ``` yaml
 - name: Instalar k3s como servidor
@@ -318,11 +378,11 @@ Instala k3s en modo servidor en el nodo master usando el script oficial de insta
   become: false
 ```
 
-Gracias a `creates: /usr/local/bin/k3s`, esta tarea es idempotente: si k3s ya está instalado, Ansible no lo vuelve a ejecutar.
+El creates: /usr/local/bin/k3s hace que la instalación sea idempotente: si el binario ya existe, Ansible se salta la tarea.
 
 ## 5.7 ROL K3S_WORKER
 
-Cada worker lee el token y la IP del master que guardó el rol anterior (a través de `hostvars['localhost']`) e instala k3s en modo agente apuntando a ese master:
+Cada worker coge el token y la IP del master de hostvars['localhost'], donde los dejó el rol anterior, e instala k3s en modo agente contra ese master:
 
 ``` yaml
 - name: Instalar k3s como agente
@@ -333,13 +393,13 @@ Cada worker lee el token y la IP del master que guardó el rol anterior (a trav�
     creates: /usr/local/bin/k3s
 ```
 
-De esta forma no hay que copiar el token a mano en ningún sitio: viaja de un rol a otro a través de los facts de Ansible.
+Así no copio el token a mano en ningún momento. Pasa de un rol a otro en los facts de Ansible.
 
 # 6. HELM: NFS PROVISIONER
 
-Con el clúster k3s ya funcionando y el servidor NFS disponible, el último paso es desplegar un **NFS provisioner** dentro del propio clúster. Esto permite crear `PersistentVolumes` dinámicos respaldados por el servidor NFS, de modo que cualquier pod puede pedir almacenamiento sin importar en qué nodo físico esté corriendo.
+Con k3s funcionando y el servidor NFS levantado, falta desplegar un NFS provisioner dentro del clúster. El provisioner crea PersistentVolumes dinámicos sobre el servidor NFS, así que un pod puede pedir almacenamiento esté en el nodo que esté.
 
-`helm/nfs-provisioner/values.yaml`:
+helm/nfs-provisioner/values.yaml:
 
 ``` yaml
 nfs:
@@ -349,13 +409,13 @@ storageClass:
   name: nfs-csi
 ```
 
-La IP del servidor NFS no está escrita a mano aquí: el `Makefile` la lee dinámicamente del fichero `ansible/hosts` generado antes y se la pasa a Helm con `--set nfs.server=`.
+La IP del servidor NFS no aparece en este fichero. El Makefile la saca del ansible/hosts generado antes y se la pasa a Helm con --set nfs.server=.
 
-Una vez desplegado, queda disponible una `StorageClass` llamada `nfs-csi` que puede usar cualquier `PersistentVolumeClaim` del clúster.
+Tras el despliegue, el clúster tiene una StorageClass llamada nfs-csi que puede usar cualquier PersistentVolumeClaim.
 
 # 7. MAKEFILE: AUTOMATIZACIÓN COMPLETA
 
-Todo el flujo anterior se orquesta desde un único `Makefile`, de forma idempotente:
+Todo lo anterior se lanza desde un único Makefile:
 
 ``` makefile
 all: up configure nfs
@@ -393,7 +453,7 @@ destroy:
 	@rm -f $(KUBECONFIG)
 ```
 
-Los comandos disponibles son:
+Estos son los comandos:
 
 ``` bash
 make all        # ejecuta up + configure + nfs
@@ -403,11 +463,11 @@ make nfs        # despliega el NFS provisioner con Helm
 make destroy    # destruye todas las VMs y limpia los ficheros generados
 ```
 
-La idempotencia se consigue en varios puntos: `tofu init` solo se ejecuta si `.terraform/` no existe, `tofu apply` no hace nada si las VMs ya están creadas y no hay cambios, los playbooks de Ansible comprueban el estado antes de actuar, y `helm upgrade --install` actualiza si hay cambios y no hace nada si está todo igual.
+Puedo ejecutar make all las veces que quiera sin romper nada. tofu init solo corre si no existe .terraform/, tofu apply no hace nada si las VMs ya están creadas y no ha cambiado nada, los playbooks de Ansible comprueban el estado antes de actuar y helm upgrade --install solo actualiza cuando hay cambios.
 
 # 8. PUESTA EN MARCHA
 
-Con todo lo anterior montado, levantar el clúster completo desde cero se reduce a estos pasos:
+Para levantar el clúster desde cero:
 
 ``` bash
 # 1. Clonar el repo
@@ -429,9 +489,9 @@ kubectl get nodes
 
 # 9. MIGRACIÓN A UN SERVIDOR DEDICADO
 
-Una de las ventajas de separar la infraestructura (OpenTofu) de la configuración (Ansible) es que el proyecto es fácilmente portable a un proveedor real, por ejemplo Hetzner, sin tener que rehacer nada de Ansible ni del Makefile:
+Como la infraestructura (OpenTofu) y la configuración (Ansible) van por separado, llevar el proyecto a un proveedor real como Hetzner no obliga a rehacer Ansible ni el Makefile:
 
-1. Cambiar el provider en `opentofu/provider.tf` por el de Hetzner
-2. Adaptar `opentofu/main.tf` con los recursos de Hetzner Cloud en vez de instancias de Multipass
-3. Los playbooks de Ansible y el `Makefile` se reutilizan sin cambios, ya que solo dependen del inventario generado
-4. Para almacenamiento distribuido nativo en un entorno real, se podría sustituir el NFS provisioner por **Longhorn**
+1. Cambiar el provider de opentofu/provider.tf por el de Hetzner
+2. Adaptar opentofu/main.tf para crear servidores de Hetzner Cloud en lugar de instancias de Multipass
+3. Los playbooks y el Makefile se quedan igual, porque solo dependen del inventario generado
+4. En un entorno real tendría más sentido un almacenamiento distribuido como Longhorn que el NFS provisioner
