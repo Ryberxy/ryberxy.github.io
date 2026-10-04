@@ -206,7 +206,7 @@ systemctl start openvpn-server@server
 dev tun
 
 #Direcciones remota
-remote 85.50.230.73
+remote vpn.ejemplo.com
 
 #Aceptar directivas del extremo remoto
 pull

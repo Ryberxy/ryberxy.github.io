@@ -85,7 +85,7 @@ sudo nano /etc/openvpn/server/server2.conf
 dev tun
 
 #Direcciones remota
-remote 85.50.230.73
+remote vpn.ejemplo.com
 
 #Aceptar directivas del extremo remoto
 ifconfig 10.99.99.2 10.99.99.1
