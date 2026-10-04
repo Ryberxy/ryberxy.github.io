@@ -1,5 +1,5 @@
 theme = "blowfish"
-baseURL = "https://ryberxy.github.io/"
+baseURL = "https://www.robemr.es/"
 defaultContentLanguage = "es"
 languageCode = "es"
 title = "Blog Ryberxy"
@@ -8,7 +8,7 @@ title = "Blog Ryberxy"
 # https://blowfish.page/docs/getting-started/
 
 # theme = "blowfish" # UNCOMMENT THIS LINE
-# baseURL = "https://your_domain.com/"
+#baseURL = "https://your_domain.com/"
 
 # pluralizeListTitles = "true" # hugo function useful for non-english languages, find out more in  https://gohugo.io/getting-started/configuration/#pluralizelisttitles
 
