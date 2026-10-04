@@ -1,8 +1,8 @@
 ---
-title: "Compilación_kernel_Roberto"
+title: "Compilación de kernel Linux "
 date: 2026-09-30
 description: ""
-tags: []
+tags: ["Linux", "ASO", "ISO"]
 ---
 
 # 1. Introducción
