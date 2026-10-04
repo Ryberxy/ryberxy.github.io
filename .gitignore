@@ -21,3 +21,4 @@ __pycache__/
 # --- Variables de entorno / secretos (por si acaso en el futuro) ---
 .env
 .claude
+*.docx
