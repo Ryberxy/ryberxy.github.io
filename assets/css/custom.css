@@ -273,6 +273,10 @@ body > header .main-menu {
 #sobre-mi, #stack {
   scroll-margin-top: 5rem;
 }
+/* El texto de Sobre mí ocupa todo el ancho de la caja (prose lo limita a 65ch) */
+#sobre-mi .prose {
+  max-width: none;
+}
 
 /* Cards de la sección Stack */
 .rbx-stack-icon {
