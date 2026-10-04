@@ -28,8 +28,20 @@
   <section id="stack" class="rbx-home-section">
     <div class="rbx-home-section-inner">
       <h2>{{ .Title }}</h2>
-      <div class="prose dark:prose-invert">
-        {{ .Content }}
+      <div class="w-full grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+        {{ range $item := .Params.items }}
+          <article
+            class="rbx-stack-card rounded-lg border border-neutral-300/80 bg-white/85 p-4 dark:border-neutral-600/80 dark:bg-neutral-900/80"
+            style="--rbx-stack-color: {{ .color | default "currentColor" | safeCSS }}">
+            <header class="flex items-center gap-3">
+              {{ with resources.Get (printf "icons/stack/%s.svg" .icon) }}
+                <span class="rbx-stack-icon rbx-stack-icon--{{ $item.icon }}">{{ .Content | safeHTML }}</span>
+              {{ end }}
+              <h3 class="text-xl font-bold text-neutral-800 dark:text-neutral">{{ .name }}</h3>
+            </header>
+            <p class="mt-2 text-sm text-neutral-500 dark:text-neutral-400">{{ .description }}</p>
+          </article>
+        {{ end }}
       </div>
     </div>
   </section>

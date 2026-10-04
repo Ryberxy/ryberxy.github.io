@@ -273,3 +273,23 @@ body > header .main-menu {
 #sobre-mi, #stack {
   scroll-margin-top: 5rem;
 }
+
+/* Cards de la sección Stack */
+.rbx-stack-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  color: var(--rbx-stack-color);
+}
+.rbx-stack-icon svg {
+  width: 100%;
+  height: 100%;
+}
+.rbx-stack-card h3 {
+  margin: 0;
+}
+/* El amarillo de Linux no se lee sobre la card clara */
+html:not(.dark) .rbx-stack-icon--linux {
+  color: #1f2937;
+}
