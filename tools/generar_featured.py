@@ -33,7 +33,18 @@ def recortar_margenes(img):
         bbox = ImageChops.difference(gris, bg).getbbox()
     return img.crop(bbox) if bbox else img
 
-def logo_con_tarjeta(logo_path, lado=220, margen=30, radio=28):
+def parsear_spec(spec):
+    # "ruta.png:0.8" -> ("ruta.png", 0.8); sin factor -> 1.0
+    if ":" in spec:
+        ruta, factor_str = spec.rsplit(":", 1)
+        try:
+            return ruta, float(factor_str)
+        except ValueError:
+            pass
+    return spec, 1.0
+
+def logo_con_tarjeta(logo_spec, lado=220, margen=30, radio=28):
+    logo_path, factor = parsear_spec(logo_spec)
     tarjeta = Image.new("RGBA", (lado, lado), (0, 0, 0, 0))
     mask = Image.new("L", (lado, lado), 0)
     ImageDraw.Draw(mask).rounded_rectangle([0, 0, lado, lado], radius=radio, fill=255)
@@ -47,7 +58,9 @@ def logo_con_tarjeta(logo_path, lado=220, margen=30, radio=28):
     base_blanca.alpha_composite(logo)
     logo = base_blanca
 
-    logo.thumbnail((lado - margen*2, lado - margen*2))
+    # el factor escala el hueco del logo; mínimo 8px de margen con la tarjeta
+    hueco = min(int((lado - margen*2) * factor), lado - 16)
+    logo.thumbnail((hueco, hueco))
     pos = ((lado - logo.width)//2, (lado - logo.height)//2)
     tarjeta.paste(logo, pos)
     return tarjeta
@@ -71,15 +84,7 @@ def logos_combinados(logo_specs_raw, lado=220, radio=28):
 
     pares = []
     for spec in logo_specs_raw:
-        if ":" in spec:
-            ruta, factor_str = spec.rsplit(":", 1)
-            try:
-                factor = float(factor_str)
-            except ValueError:
-                ruta, factor = spec, 1.0
-        else:
-            ruta, factor = spec, 1.0
-
+        ruta, factor = parsear_spec(spec)
         logo = recortar_margenes(Image.open(ruta))
         base_blanca = Image.new("RGBA", logo.size, (255, 255, 255, 255))
         base_blanca.alpha_composite(logo)
