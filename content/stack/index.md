@@ -10,7 +10,7 @@ items:
   - name: "Kubernetes"
     icon: "kubernetes"
     color: "#326CE5"
-    description: "Despliegue y administración de clústeres, tanto en entornos locales con k3s como en la nube con Azure Kubernetes Service (AKS)."
+    description: "Experiencia en despliegue y administración de clústeres, principalmente en Azure Kubernetes Service (AKS)."
 
   - name: "Virtualización"
     icon: "virtualizacion"
@@ -20,7 +20,7 @@ items:
   - name: "Git"
     icon: "git"
     color: "#F05032"
-    description: "Control de versiones y gestión de repositorios con Git y GitHub."
+    description: "Control de versiones y gestión de repositorios con Git y GitHub. Experiencia en GitLab CI y GitHub actions"
 
   - name: "Linux"
     icon: "linux"
@@ -31,4 +31,19 @@ items:
     icon: "terraform"
     color: "#844FBA"
     description: "Aprovisionamiento de infraestructura como código con Terraform y OpenTofu."
+
+  - name: "Ansible"
+    icon: "ansible"
+    color: "#EE0000"
+    description: "Experiencia en configuraciones de infraestructuras con playbooks aplicando idempotencia."
+
+  - name: "CI/CD"
+    icon: "cicd"
+    color: "#EF7B4D"
+    description: "Experiencia en la optimización y mantenimiento de pipelines (Jenkins) y automatización de despliegues con Helm y ArgoCD."
+
+  - name: "Automatización"
+    icon: "automatizacion"
+    color: "#4EAA25"
+    description: "Experiencia en el desarrollo de scripts para realizar automatizaciones con Bash y Python."
 ---
