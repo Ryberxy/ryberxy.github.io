@@ -46,4 +46,9 @@ items:
     icon: "automatizacion"
     color: "#4EAA25"
     description: "Experiencia en el desarrollo de scripts para realizar automatizaciones con Bash y Python."
+
+  - name: "Observabilidad"
+    icon: "observabilidad"
+    color: "#F46800"
+    description: "Experiencia en el análisis de métricas con OTel, Prometheus, Node Exporter y Grafana."
 ---
