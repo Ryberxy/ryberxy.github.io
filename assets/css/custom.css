@@ -297,3 +297,13 @@ body > header .main-menu {
 html:not(.dark) .rbx-stack-icon--linux {
   color: #1f2937;
 }
+
+/* Footer: barra a todo el ancho con el mismo azul oscuro que el header */
+#site-footer {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  padding: 1.25rem max(1.5rem, calc((100vw - 80rem) / 2 + 1.5rem));
+  background: rgba(2, 6, 23, 0.85);
+  backdrop-filter: blur(8px);
+}
