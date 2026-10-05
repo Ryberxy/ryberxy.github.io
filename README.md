@@ -3,7 +3,7 @@ mkdir -p content/posts/base-de-datos/consultas-sql
 cp ~/Descargas/"Base de datos - Consultas SQL.docx" content/posts/base-de-datos/consultas-sql/
 ./tools/convertir.sh
 
-
+ 
 # Añadir a categoría que ya existe
 mkdir content/posts/vpn/configurar-openvpn-site-to-site
 cp ~/Descargas/"VPN - OpenVPN Site to Site.docx" content/posts/vpn/configurar-openvpn-site-to-site/
