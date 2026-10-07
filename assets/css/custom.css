@@ -182,7 +182,9 @@ body > header .main-menu {
   border-radius: 1rem 1rem 0 0;
   width: 100%;
   max-width: 1120px;
-  height: 400px;
+  /* Alto proporcional al ancho para que object-cover no recorte la imagen (1120x400) */
+  height: auto;
+  aspect-ratio: 1120 / 400;
   margin: 0 auto;
 }
 
