@@ -1,0 +1,2 @@
+Iconos de Lucide (https://lucide.dev), licencia ISC.
+Renderizados en #1e40af con rsvg-convert a 512px para las imágenes de las categorías.

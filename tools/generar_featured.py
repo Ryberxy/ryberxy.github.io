@@ -30,7 +30,9 @@ def recortar_margenes(img):
     else:
         gris = img.convert("L")
         bg = Image.new("L", gris.size, 255)
-        bbox = ImageChops.difference(gris, bg).getbbox()
+        # umbral para que fondos casi blancos (p.ej. 250) también se recorten
+        diff = ImageChops.difference(gris, bg).point(lambda v: 255 if v > 12 else 0)
+        bbox = diff.getbbox()
     return img.crop(bbox) if bbox else img
 
 def parsear_spec(spec):
