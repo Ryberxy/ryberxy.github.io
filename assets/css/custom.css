@@ -46,7 +46,6 @@ html {
 
   /* Panel derecho: tarjeta flotante, no a toda altura */
   .rbx-toc {
-    display: block;
     width: 20rem;
     flex-shrink: 0;
     position: sticky;
@@ -59,6 +58,20 @@ html {
     border: 1px solid rgba(148, 163, 184, 0.2);
     border-radius: 0.75rem;
     backdrop-filter: blur(6px);
+  }
+}
+
+/* El índice solo cabe junto a la barra lateral en pantallas anchas; por debajo
+   se queda la columna central demasiado estrecha (portátiles con escalado 125-150 %) */
+@media (min-width: 1280px) {
+  .rbx-toc {
+    display: block;
+  }
+}
+@media (min-width: 1024px) and (max-width: 1535px) {
+  .rbx-sidebar,
+  .rbx-toc {
+    width: 16rem;
   }
 }
 
